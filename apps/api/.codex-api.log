@@ -1,0 +1,8 @@
+Biblioteca API rodando em http://localhost:3001
+Biblioteca API em rede local: http://192.168.0.173:3001
+Rotas disponiveis:
+POST /loans
+POST /loans/:loanId/return
+POST /admin/books/import-pdf
+GET /health
+GET /seed

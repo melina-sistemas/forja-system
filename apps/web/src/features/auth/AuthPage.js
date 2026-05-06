@@ -1,0 +1,320 @@
+import React, { useEffect, useState } from "react";
+import htm from "htm";
+import { PageLayout } from "../../components/PageLayout.js";
+import { FeedbackMessage } from "../../components/FeedbackMessage.js";
+
+const html = htm.bind(React.createElement);
+
+const LOGIN_INITIAL_STATE = {
+  email: "",
+  password: ""
+};
+
+const REGISTER_INITIAL_STATE = {
+  fullName: "",
+  email: "",
+  company: "",
+  department: "",
+  cpf: "",
+  phone: "",
+  birthDate: "",
+  password: ""
+};
+
+export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
+  const [loginForm, setLoginForm] = useState(LOGIN_INITIAL_STATE);
+  const [registerForm, setRegisterForm] = useState(REGISTER_INITIAL_STATE);
+  const [feedback, setFeedback] = useState(null);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+
+  useEffect(() => {
+    setFeedback(null);
+  }, [mode]);
+
+  function handleLoginSubmit(event) {
+    event.preventDefault();
+    const result = onLogin?.(loginForm);
+    if (result?.message) {
+      setFeedback({
+        tone: result.success ? "success" : "error",
+        title: result.success ? "Acesso liberado" : "Nao foi possivel entrar",
+        message: result.message
+      });
+    }
+  }
+
+  function handleRegisterSubmit(event) {
+    event.preventDefault();
+    const result = onRegister?.(registerForm);
+    if (result?.message) {
+      setFeedback({
+        tone: result.success ? "success" : "error",
+        title: result.success ? "Solicitacao enviada" : "Nao foi possivel cadastrar",
+        message: result.message
+      });
+    }
+  }
+
+  const asideTitle =
+    mode === "login"
+      ? "Entre para continuar sua jornada de leitura."
+      : "Crie seu acesso para evoluir com a biblioteca FORJA.";
+  const asideDescription =
+    mode === "login"
+      ? "Use o seu e-mail corporativo para acessar livros, progresso e recomendacoes da equipe."
+      : "Complete seu cadastro para solicitar acesso ao sistema e acompanhar sua evolucao profissional.";
+  const asideItems =
+    mode === "login"
+      ? [
+          {
+            title: "Acesso imediato",
+            description: "Entre para consultar leituras em andamento, score e livros disponiveis."
+          },
+          {
+            title: "Ambiente centralizado",
+            description: "Tudo fica reunido em um unico espaco, sem precisar procurar em varias planilhas."
+          }
+        ]
+      : [
+          {
+            title: "Leitura guiada",
+            description: "Livros recomendados conforme o momento profissional de cada pessoa."
+          },
+          {
+            title: "Progresso visivel",
+            description: "Ranking, score, nivel e historico concentrados no mesmo ambiente."
+          },
+          {
+            title: "Acesso controlado",
+            description: "O login usa o cadastro existente no sistema ou criado previamente no fluxo de acesso."
+          }
+        ];
+
+  return html`
+    <${PageLayout} className="auth-layout">
+      <section className="auth-page">
+        <div className=${`auth-shell auth-shell--${mode}`}> 
+          <aside className=${`auth-aside auth-aside--${mode}`}>
+            <span className="auth-tag">FORJA</span>
+            <h1>${asideTitle}</h1>
+            <p>${asideDescription}</p>
+
+            <div className="auth-aside-list">
+              ${asideItems.map(
+                (item) => html`
+                  <article key=${item.title} className="auth-aside-item">
+                    <strong>${item.title}</strong>
+                    <span>${item.description}</span>
+                  </article>
+                `
+              )}
+            </div>
+          </aside>
+
+          <div className=${`auth-card auth-card--${mode}`}>
+            <div className="auth-switch">
+              <button
+                type="button"
+                className=${`auth-switch-item ${mode === "login" ? "active" : ""}`}
+                onClick=${() => onModeChange?.("login")}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                className=${`auth-switch-item ${mode === "register" ? "active" : ""}`}
+                onClick=${() => onModeChange?.("register")}
+              >
+                Cadastrar
+              </button>
+            </div>
+
+            ${mode === "login"
+              ? html`
+                  <form className="auth-form" onSubmit=${handleLoginSubmit}>
+                    <label>
+                      <span>Email</span>
+                      <input
+                        type="email"
+                        value=${loginForm.email}
+                        onChange=${(event) =>
+                          setLoginForm((current) => ({
+                            ...current,
+                          email: event.target.value
+                        }))}
+                        placeholder="voce@empresa.com"
+                      />
+                    </label>
+
+                    <label>
+                      <span>Senha</span>
+                      <div className="auth-input-with-action">
+                        <input
+                          type=${showLoginPassword ? "text" : "password"}
+                          value=${loginForm.password}
+                          onChange=${(event) =>
+                            setLoginForm((current) => ({
+                              ...current,
+                              password: event.target.value
+                            }))}
+                          placeholder="Digite sua senha"
+                        />
+                        <button
+                          type="button"
+                          className="auth-input-action"
+                          onClick=${() => setShowLoginPassword((current) => !current)}
+                        >
+                          ${showLoginPassword ? "Ocultar" : "Mostrar"}
+                        </button>
+                      </div>
+                    </label>
+
+                    <div className="auth-submit-row">
+                      <button type="submit" className="auth-submit">
+                        Entrar no sistema
+                      </button>
+                    </div>
+                  </form>
+                `
+              : html`
+                <form className="auth-form auth-form-grid" onSubmit=${handleRegisterSubmit}>
+                  <label>
+                    <span>Nome</span>
+                    <input
+                      value=${registerForm.fullName}
+                      onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            fullName: event.target.value
+                          }))}
+                        placeholder="Nome e sobrenome"
+                    />
+                  </label>
+
+                  <label>
+                    <span>Email</span>
+                    <input
+                      type="email"
+                      value=${registerForm.email}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            email: event.target.value
+                          }))}
+                        placeholder="voce@empresa.com"
+                      />
+                    </label>
+
+                  <label>
+                    <span>Empresa</span>
+                    <input
+                      value=${registerForm.company}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            company: event.target.value
+                          }))}
+                        placeholder="Nome da empresa"
+                      />
+                  </label>
+
+                  <label>
+                    <span>Setor</span>
+                    <input
+                      value=${registerForm.department}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            department: event.target.value
+                          }))}
+                        placeholder="Area de atuacao"
+                      />
+                  </label>
+
+                  <label>
+                    <span>CPF</span>
+                      <input
+                        value=${registerForm.cpf}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            cpf: event.target.value
+                          }))}
+                        placeholder="000.000.000-00"
+                      />
+                    </label>
+
+                  <label>
+                    <span>Telefone</span>
+                    <input
+                      value=${registerForm.phone}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            phone: event.target.value
+                          }))}
+                        placeholder="(00) 00000-0000"
+                      />
+                  </label>
+
+                  <label>
+                    <span>Nascimento</span>
+                    <input
+                      type="date"
+                        value=${registerForm.birthDate}
+                        onChange=${(event) =>
+                          setRegisterForm((current) => ({
+                            ...current,
+                            birthDate: event.target.value
+                          }))}
+                      />
+                    </label>
+
+                    <label>
+                      <span>Senha</span>
+                      <div className="auth-input-with-action">
+                        <input
+                          type=${showRegisterPassword ? "text" : "password"}
+                          value=${registerForm.password}
+                          onChange=${(event) =>
+                            setRegisterForm((current) => ({
+                              ...current,
+                              password: event.target.value
+                            }))}
+                          placeholder="Crie uma senha"
+                        />
+                        <button
+                          type="button"
+                          className="auth-input-action"
+                          onClick=${() => setShowRegisterPassword((current) => !current)}
+                        >
+                          ${showRegisterPassword ? "Ocultar" : "Mostrar"}
+                        </button>
+                      </div>
+                    </label>
+
+                  <div className="auth-submit-row auth-submit-wide">
+                    <button type="submit" className="auth-submit">
+                      Solicitar acesso
+                    </button>
+                  </div>
+                </form>
+              `}
+
+            ${feedback
+              ? html`
+                  <${FeedbackMessage}
+                    tone=${feedback.tone}
+                    title=${feedback.title}
+                    message=${feedback.message}
+                    className="auth-feedback"
+                  />
+                `
+              : null}
+          </div>
+        </div>
+      </section>
+    <//>
+  `;
+}
