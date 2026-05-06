@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sistema Interno de Biblioteca
 
 Estrutura inicial de um sistema web interno para a equipe gerenciar livros, emprestimos e historico de uso.
@@ -24,3 +25,6 @@ Nesta etapa, organizamos a base do projeto para crescer sem bagunca. Ainda nao h
 3. Criar a primeira tela: catalogo de livros.
 4. Criar a primeira API: listagem e cadastro de livros.
 
+=======
+# forja-system
+>>>>>>> 186b8c1e3e1f5803741f4014b6b693c8b8633409
