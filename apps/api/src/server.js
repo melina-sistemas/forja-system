@@ -6,12 +6,19 @@ import { loadEnvFile } from "./config/load-env.js";
 import { getSupabaseConfig } from "./config/supabase-config.js";
 import { createDevelopmentPlanCatalog } from "./data/development-plan-data.js";
 import { createLoan } from "./modules/loans/runtime/create-loan.js";
+import { InMemoryLoanRepository } from "./modules/loans/runtime/in-memory-loan-repository.js";
 import { returnLoan } from "./modules/loans/runtime/return-loan.js";
 import { SupabaseLoanRepository } from "./modules/loans/runtime/supabase-loan-repository.js";
 
 const ADMIN_BOOKS_STATE_FILE = new URL("./data/admin-books-state.json", import.meta.url);
 
 loadEnvFile();
+
+const repository = createRepository();
+const server = createApiServer(repository);
+
+export { server };
+export default server;
 
 export function createApiServer(repository) {
   return createServer(async (request, response) => {
@@ -419,9 +426,6 @@ const isMainModule =
 if (isMainModule) {
   try {
     const port = Number(process.env.PORT ?? 3001);
-    const repository = new SupabaseLoanRepository(getSupabaseConfig());
-    const server = createApiServer(repository);
-
     server.listen(port, "0.0.0.0", () => {
       console.log(`Biblioteca API rodando em http://localhost:${port}`);
       for (const address of getLocalAddresses()) {
@@ -456,6 +460,18 @@ function getLocalAddresses() {
   return [...new Set(addresses)];
 }
 
-export const server = createApiServer(new SupabaseLoanRepository(getSupabaseConfig()));
+function createRepository() {
+  const hasSupabaseConfig =
+    Boolean(process.env.SUPABASE_URL) &&
+    Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-export default server;
+  if (hasSupabaseConfig) {
+    return new SupabaseLoanRepository(getSupabaseConfig());
+  }
+
+  console.warn(
+    "SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY ausentes. Usando repositorio em memoria."
+  );
+
+  return new InMemoryLoanRepository();
+}
