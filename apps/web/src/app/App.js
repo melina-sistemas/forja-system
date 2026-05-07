@@ -21,6 +21,7 @@ import { AdminGamificationPage } from "../pages/admin/AdminGamificationPage.js";
 import { AdminLoansPage } from "../pages/admin/AdminLoansPage.js";
 import { AdminMonitoringPage } from "../pages/admin/AdminMonitoringPage.js";
 import { AdminSettingsPage } from "../pages/admin/AdminSettingsPage.js";
+import { createDevelopmentPlanCatalog } from "../data/development-plan-data.js";
 
 const html = htm.bind(React.createElement);
 
@@ -30,6 +31,7 @@ const EMPTY_CATALOG = {
   loans: [],
   returns: []
 };
+const FALLBACK_CATALOG = normalizeCatalogPayload(createDevelopmentPlanCatalog());
 const AUTH_STORAGE_KEY = "forja-auth-session-v1";
 const PREVIEW_AUTO_LOGIN = true;
 const PREVIEW_AUTH_USER = {
@@ -280,9 +282,25 @@ export function App() {
           }));
         }
       } catch (error) {
+        const fallbackCatalog = FALLBACK_CATALOG;
+
         if (!ignore) {
-          setCatalogError(error instanceof Error ? error.message : String(error));
+          setCatalog(fallbackCatalog);
+          setCatalogError(null);
           setLoadingCatalog(false);
+        }
+
+        if (!import.meta.env.PROD) {
+          console.warn("Falha ao carregar o catalogo remoto; usando catalogo local.", error);
+        }
+
+        const enrichedBooks = await enrichBooksWithGoogleBooks(fallbackCatalog.books);
+
+        if (!ignore) {
+          setCatalog((current) => ({
+            ...current,
+            books: enrichedBooks
+          }));
         }
       }
     }
@@ -330,7 +348,20 @@ export function App() {
         books: enrichedBooks
       }));
     } catch (error) {
-      setCatalogError(error instanceof Error ? error.message : String(error));
+      const fallbackCatalog = FALLBACK_CATALOG;
+      setCatalog(fallbackCatalog);
+      setCatalogError(null);
+
+      const enrichedBooks = await enrichBooksWithGoogleBooks(fallbackCatalog.books);
+
+      setCatalog((current) => ({
+        ...current,
+        books: enrichedBooks
+      }));
+
+      if (!import.meta.env.PROD) {
+        console.warn("Falha ao atualizar o catalogo remoto; usando catalogo local.", error);
+      }
     }
   }
 

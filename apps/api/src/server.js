@@ -23,20 +23,21 @@ export default server;
 export function createApiServer(repository) {
   return createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", "http://localhost");
+    const pathname = normalizeRequestPath(url.pathname);
 
     try {
       if (request.method === "OPTIONS") {
         return sendJson(response, 204, null);
       }
 
-      if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+      if (request.method === "GET" && (pathname === "/" || pathname === "/health")) {
         return sendJson(response, 200, {
           status: "ok",
           message: "API da biblioteca ativa."
         });
       }
 
-      if (request.method === "GET" && url.pathname === "/seed") {
+      if (request.method === "GET" && pathname === "/seed") {
         const snapshot = await repository.getLibrarySnapshot();
         const adminBooksState = await readAdminBooksState();
         const mergedBooks = mergeBooks(snapshot.books, adminBooksState.books);
@@ -47,7 +48,7 @@ export function createApiServer(repository) {
         });
       }
 
-      if (request.method === "POST" && url.pathname === "/loans") {
+      if (request.method === "POST" && pathname === "/loans") {
         const body = await readJsonBody(request);
 
         if (!body.userId || !body.bookId) {
@@ -72,7 +73,7 @@ export function createApiServer(repository) {
         return sendUseCaseResult(response, result, 201);
       }
 
-      const returnMatch = url.pathname.match(/^\/loans\/([^/]+)\/return$/);
+      const returnMatch = pathname.match(/^\/loans\/([^/]+)\/return$/);
 
       if (request.method === "POST" && returnMatch) {
         const body = await readJsonBody(request);
@@ -90,7 +91,7 @@ export function createApiServer(repository) {
         return sendUseCaseResult(response, result, 200);
       }
 
-      if (request.method === "POST" && url.pathname === "/admin/books/import-pdf") {
+      if (request.method === "POST" && pathname === "/admin/books/import-pdf") {
         const body = await readJsonBody(request);
 
         if (!body.extractedText && !body.pdfUrl) {
@@ -111,7 +112,7 @@ export function createApiServer(repository) {
         });
       }
 
-      if (request.method === "POST" && url.pathname === "/admin/books/sync") {
+      if (request.method === "POST" && pathname === "/admin/books/sync") {
         const body = await readJsonBody(request);
         const nextBooks = Array.isArray(body.books) ? body.books : [];
 
@@ -143,6 +144,20 @@ export function createApiServer(repository) {
       });
     }
   });
+}
+
+function normalizeRequestPath(pathname) {
+  const normalized = pathname.replace(/\/+$/, "") || "/";
+
+  if (normalized === "/api") {
+    return "/";
+  }
+
+  if (normalized.startsWith("/api/")) {
+    return normalized.slice(4) || "/";
+  }
+
+  return normalized;
 }
 
 function normalizeAnswers(body) {
