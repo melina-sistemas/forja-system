@@ -2,7 +2,6 @@ import { createServer } from "node:http";
 import os from "node:os";
 import { readFile, writeFile } from "node:fs/promises";
 import { URL } from "node:url";
-import { PDFParse } from "pdf-parse";
 import { loadEnvFile } from "./config/load-env.js";
 import { getSupabaseConfig } from "./config/supabase-config.js";
 import { createDevelopmentPlanCatalog } from "./data/development-plan-data.js";
@@ -85,17 +84,17 @@ export function createApiServer(repository) {
       if (request.method === "POST" && url.pathname === "/admin/books/import-pdf") {
         const body = await readJsonBody(request);
 
-        if (!body.contentBase64) {
+        if (!body.extractedText && !body.pdfUrl) {
           return sendJson(response, 400, {
             success: false,
             error: {
               code: "invalid_request",
-              message: "Envie contentBase64 com o PDF."
+              message: "Envie extractedText ou pdfUrl para importar os livros."
             }
           });
         }
 
-        const importedBooks = await importBooksFromPdf(body);
+        const importedBooks = await importBooksFromImportedPdfText(body);
 
         return sendJson(response, 200, {
           success: true,
@@ -255,11 +254,8 @@ function mergeBooks(baseBooks = [], adminBooks = []) {
   );
 }
 
-async function importBooksFromPdf(body) {
-  const buffer = Buffer.from(body.contentBase64, "base64");
-  const parser = new PDFParse({ data: buffer });
-  const result = await parser.getText();
-  const text = String(result?.text ?? "").replace(/\r/g, "");
+async function importBooksFromImportedPdfText(body) {
+  const text = String(body.extractedText ?? "").replace(/\r/g, "");
 
   if (!text.trim()) {
     return [];

@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import htm from "htm";
-import { GlobalWorkerOptions, getDocument } from "pdfjs-dist";
-import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
 const html = htm.bind(React.createElement);
-GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+let pdfJsRuntimePromise = null;
 
 export function BookCatalog({
   books,
@@ -171,15 +169,28 @@ export function BookCatalog({
     }
 
     let cancelled = false;
-    const loadingTask = getDocument({
-      data: decodeBase64Pdf(readerBook.digitalContentBase64)
-    });
+    let loadingTask = null;
 
     setReaderLoading(true);
     setReaderError("");
 
-    loadingTask.promise
+    loadPdfJsRuntime()
+      .then(({ getDocument }) => {
+        if (cancelled) {
+          return null;
+        }
+
+        loadingTask = getDocument({
+          data: decodeBase64Pdf(readerBook.digitalContentBase64)
+        });
+
+        return loadingTask.promise;
+      })
       .then((pdfDocument) => {
+        if (!pdfDocument) {
+          return;
+        }
+
         if (cancelled) {
           void pdfDocument.destroy();
           return;
@@ -213,7 +224,9 @@ export function BookCatalog({
         readerRenderTaskRef.current.cancel();
         readerRenderTaskRef.current = null;
       }
-      void loadingTask.destroy();
+      if (loadingTask) {
+        void loadingTask.destroy();
+      }
       const currentDoc = readerDocRef.current;
       readerDocRef.current = null;
       if (currentDoc) {
@@ -912,15 +925,6 @@ export function BookCatalog({
                   </div>
                 </div>
 
-                <div className="reader-modal-toolbar">
-                  <span>${translateLoanStatus(readerBook.currentReaderLoan?.status)}</span>
-                  <strong>
-                    ${readerPageCount
-                      ? `Pagina ${readerPage} de ${readerPageCount}`
-                      : "Carregando leitor"}
-                  </strong>
-                </div>
-
                 <div className="reader-modal-body">
                   <div className="reader-stage">
                     <div className="reader-modal-frame">
@@ -1080,6 +1084,31 @@ function writeStoredReaderPage(bookId, page) {
   } catch (error) {
     void error;
   }
+}
+
+async function loadPdfJsRuntime() {
+  if (!globalThis.window) {
+    throw new Error("Leitura digital disponivel apenas no navegador.");
+  }
+
+  if (!pdfJsRuntimePromise) {
+    pdfJsRuntimePromise = Promise.all([
+      import("pdfjs-dist"),
+      import("pdfjs-dist/build/pdf.worker.min.mjs?url")
+    ]).then(([pdfjsModule, workerModule]) => {
+      const workerUrl = workerModule?.default || workerModule;
+
+      if (pdfjsModule?.GlobalWorkerOptions && workerUrl) {
+        pdfjsModule.GlobalWorkerOptions.workerSrc = workerUrl;
+      }
+
+      return {
+        getDocument: pdfjsModule.getDocument
+      };
+    });
+  }
+
+  return pdfJsRuntimePromise;
 }
 
 function translateLoanStatus(status) {

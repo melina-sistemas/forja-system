@@ -8,6 +8,7 @@ const html = htm.bind(React.createElement);
 
 export function MyAccountPage({ currentUser, books, loans, waitlists = [], notifications = [], actions }) {
   const [profileForm, setProfileForm] = useState(() => buildProfileForm(currentUser));
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     password: "",
@@ -104,196 +105,206 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                 <h3>Dados da conta</h3>
                 <p>Atualize seu perfil e mantenha seus acessos organizados de forma simples.</p>
               </div>
+              <button
+                type="button"
+                className="admin-secondary account-toggle-button"
+                onClick=${() => {
+                  setShowProfileEditor((current) => {
+                    const next = !current;
+                    if (!next) {
+                      setShowPasswordForm(false);
+                      setPasswordForm({ password: "", confirmPassword: "" });
+                    }
+                    return next;
+                  });
+                }}
+              >
+                ${showProfileEditor ? "Ocultar dados" : "Abrir dados da conta"}
+              </button>
             </div>
 
-            <div className="account-settings-stack">
-              <div className="account-settings-panel">
-                <div className="account-panel-head">
-                  <div>
-                    <h4>Perfil</h4>
-                    <p>Atualize seus dados cadastrais e mantenha suas informacoes sempre corretas.</p>
-                  </div>
-                  <span className="account-soft-pill">${profileCompletion}% completo</span>
-                </div>
-
-                <form
-                  className="account-profile-form"
-                  onSubmit=${(event) => {
-                    event.preventDefault();
-                    actions.updateUser(currentUser.id, profileForm);
-                    setFeedback({
-                      tone: "success",
-                      title: "Dados atualizados",
-                      message: "Seu perfil foi salvo com sucesso."
-                    });
-                  }}
-                >
-                  <div className="account-form-grid">
-                    <label className="account-field account-field-span-2">
-                      <span>Nome completo</span>
-                      <input
-                        type="text"
-                        value=${profileForm.name}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({ ...current, name: event.target.value }))}
-                        placeholder="Como voce deseja aparecer no sistema"
-                      />
-                    </label>
-
-                    <label className="account-field">
-                      <span>Email</span>
-                      <input
-                        type="email"
-                        value=${profileForm.email}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({ ...current, email: event.target.value }))}
-                        placeholder="voce@empresa.com"
-                      />
-                    </label>
-
-                    <label className="account-field">
-                      <span>Telefone</span>
-                      <input
-                        type="text"
-                        value=${profileForm.phone}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({ ...current, phone: event.target.value }))}
-                        placeholder="(00) 00000-0000"
-                      />
-                    </label>
-
-                    <label className="account-field">
-                      <span>Empresa</span>
-                      <input
-                        type="text"
-                        value=${profileForm.company}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({ ...current, company: event.target.value }))}
-                        placeholder="Empresa"
-                      />
-                    </label>
-
-                    <label className="account-field">
-                      <span>Setor</span>
-                      <input
-                        type="text"
-                        value=${profileForm.department}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({
-                            ...current,
-                            department: event.target.value
-                          }))}
-                        placeholder="Seu setor"
-                      />
-                    </label>
-
-                    <label className="account-field">
-                      <span>CPF</span>
-                      <input type="text" value=${profileForm.cpf} readOnly />
-                    </label>
-
-                    <label className="account-field">
-                      <span>Data de nascimento</span>
-                      <input
-                        type="date"
-                        value=${profileForm.birthDate}
-                        onInput=${(event) =>
-                          setProfileForm((current) => ({
-                            ...current,
-                            birthDate: event.target.value
-                          }))}
-                      />
-                    </label>
-                  </div>
-
-                  <div className="account-form-actions between">
-                    <button
-                      type="button"
-                      className="admin-secondary"
-                      onClick=${() => {
-                        setShowPasswordForm((current) => !current);
-                        setPasswordForm({ password: "", confirmPassword: "" });
+            ${showProfileEditor
+              ? html`
+                  <div className="account-settings-stack">
+                    <form
+                      className="account-profile-form"
+                      onSubmit=${(event) => {
+                        event.preventDefault();
+                        actions.updateUser(currentUser.id, profileForm);
+                        setFeedback({
+                          tone: "success",
+                          title: "Dados atualizados",
+                          message: "Seu perfil foi salvo com sucesso."
+                        });
                       }}
                     >
-                      ${showPasswordForm ? "Cancelar troca de senha" : "Trocar senha"}
-                    </button>
-                    <button type="submit" className="admin-primary">Salvar alteracoes</button>
-                  </div>
-                </form>
+                      <div className="account-form-grid">
+                        <label className="account-field account-field-span-2">
+                          <span>Nome completo</span>
+                          <input
+                            type="text"
+                            value=${profileForm.name}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({ ...current, name: event.target.value }))}
+                            placeholder="Como voce deseja aparecer no sistema"
+                          />
+                        </label>
 
-                ${showPasswordForm
-                  ? html`
-                      <form
-                        className="account-password-form"
-                        onSubmit=${(event) => {
-                          event.preventDefault();
+                        <label className="account-field">
+                          <span>Email</span>
+                          <input
+                            type="email"
+                            value=${profileForm.email}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({ ...current, email: event.target.value }))}
+                            placeholder="voce@empresa.com"
+                          />
+                        </label>
 
-                          if (!passwordForm.password || passwordForm.password !== passwordForm.confirmPassword) {
-                            setFeedback({
-                              tone: "error",
-                              title: "Senha invalida",
-                              message: "Confirme a nova senha corretamente para continuar."
-                            });
-                            return;
-                          }
+                        <label className="account-field">
+                          <span>Telefone</span>
+                          <input
+                            type="text"
+                            value=${profileForm.phone}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({ ...current, phone: event.target.value }))}
+                            placeholder="(00) 00000-0000"
+                          />
+                        </label>
 
-                          const result = actions.changePassword(currentUser.id, passwordForm.password);
-                          setFeedback({
-                            tone: result.success ? "success" : "error",
-                            title: result.success ? "Senha atualizada" : "Nao foi possivel atualizar",
-                            message: result.message
-                          });
-                          if (result.success) {
+                        <label className="account-field">
+                          <span>Empresa</span>
+                          <input
+                            type="text"
+                            value=${profileForm.company}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({ ...current, company: event.target.value }))}
+                            placeholder="Empresa"
+                          />
+                        </label>
+
+                        <label className="account-field">
+                          <span>Setor</span>
+                          <input
+                            type="text"
+                            value=${profileForm.department}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({
+                                ...current,
+                                department: event.target.value
+                              }))}
+                            placeholder="Seu setor"
+                          />
+                        </label>
+
+                        <label className="account-field">
+                          <span>CPF</span>
+                          <input type="text" value=${profileForm.cpf} readOnly />
+                        </label>
+
+                        <label className="account-field">
+                          <span>Data de nascimento</span>
+                          <input
+                            type="date"
+                            value=${profileForm.birthDate}
+                            onInput=${(event) =>
+                              setProfileForm((current) => ({
+                                ...current,
+                                birthDate: event.target.value
+                              }))}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="account-form-actions between">
+                        <button
+                          type="button"
+                          className="admin-secondary"
+                          onClick=${() => {
+                            setShowPasswordForm((current) => !current);
                             setPasswordForm({ password: "", confirmPassword: "" });
-                            setShowPasswordForm(false);
-                          }
-                        }}
-                      >
-                        <div className="account-panel-head compact">
-                          <div>
-                            <h4>Nova senha</h4>
-                            <p>Preencha os campos abaixo apenas quando quiser alterar sua senha.</p>
-                          </div>
-                        </div>
+                          }}
+                        >
+                          ${showPasswordForm ? "Cancelar troca de senha" : "Trocar senha"}
+                        </button>
+                        <button type="submit" className="admin-primary">Salvar alteracoes</button>
+                      </div>
+                    </form>
 
-                        <div className="account-form-grid">
-                          <label className="account-field">
-                            <span>Nova senha</span>
-                            <input
-                              type="password"
-                              value=${passwordForm.password}
-                              onInput=${(event) =>
-                                setPasswordForm((current) => ({
-                                  ...current,
-                                  password: event.target.value
-                                }))}
-                              placeholder="Digite sua nova senha"
-                            />
-                          </label>
+                    ${showPasswordForm
+                      ? html`
+                          <form
+                            className="account-password-form"
+                            onSubmit=${(event) => {
+                              event.preventDefault();
 
-                          <label className="account-field">
-                            <span>Confirmar nova senha</span>
-                            <input
-                              type="password"
-                              value=${passwordForm.confirmPassword}
-                              onInput=${(event) =>
-                                setPasswordForm((current) => ({
-                                  ...current,
-                                  confirmPassword: event.target.value
-                                }))}
-                              placeholder="Repita a senha"
-                            />
-                          </label>
-                        </div>
+                              if (!passwordForm.password || passwordForm.password !== passwordForm.confirmPassword) {
+                                setFeedback({
+                                  tone: "error",
+                                  title: "Senha invalida",
+                                  message: "Confirme a nova senha corretamente para continuar."
+                                });
+                                return;
+                              }
 
-                        <div className="account-form-actions">
-                          <button type="submit" className="admin-primary">Atualizar senha</button>
-                        </div>
-                      </form>
-                    `
-                  : null}
-              </div>
-            </div>
+                              const result = actions.changePassword(currentUser.id, passwordForm.password);
+                              setFeedback({
+                                tone: result.success ? "success" : "error",
+                                title: result.success ? "Senha atualizada" : "Nao foi possivel atualizar",
+                                message: result.message
+                              });
+                              if (result.success) {
+                                setPasswordForm({ password: "", confirmPassword: "" });
+                                setShowPasswordForm(false);
+                              }
+                            }}
+                          >
+                            <div className="account-panel-head compact">
+                              <div>
+                                <h4>Nova senha</h4>
+                                <p>Preencha os campos abaixo apenas quando quiser alterar sua senha.</p>
+                              </div>
+                            </div>
+
+                            <div className="account-form-grid">
+                              <label className="account-field">
+                                <span>Nova senha</span>
+                                <input
+                                  type="password"
+                                  value=${passwordForm.password}
+                                  onInput=${(event) =>
+                                    setPasswordForm((current) => ({
+                                      ...current,
+                                      password: event.target.value
+                                    }))}
+                                  placeholder="Digite sua nova senha"
+                                />
+                              </label>
+
+                              <label className="account-field">
+                                <span>Confirmar nova senha</span>
+                                <input
+                                  type="password"
+                                  value=${passwordForm.confirmPassword}
+                                  onInput=${(event) =>
+                                    setPasswordForm((current) => ({
+                                      ...current,
+                                      confirmPassword: event.target.value
+                                    }))}
+                                  placeholder="Repita a senha"
+                                />
+                              </label>
+                            </div>
+
+                            <div className="account-form-actions">
+                              <button type="submit" className="admin-primary">Atualizar senha</button>
+                            </div>
+                          </form>
+                        `
+                      : null}
+                  </div>
+                `
+              : null}
           </div>
 
           <div className="account-hub-block">
@@ -454,50 +465,6 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
             </div>
           </div>
 
-          <div className="account-hub-block">
-            <div className="account-block-heading">
-              <div>
-                <h3>Minha lista de leitura</h3>
-                <p>Livros que voce quer acompanhar ou ler em breve.</p>
-              </div>
-            </div>
-
-            <div className="account-reading-grid">
-              ${readingList.length > 0
-                ? readingList.map(
-                    (book) => html`
-                      <article key=${book.id} className="account-reading-card">
-                        <div className="account-book-card-shell">
-                          <div className="account-book-cover">
-                            ${renderBookCover(book)}
-                          </div>
-                          <div className="account-book-content">
-                            <div className="account-card-top">
-                              <strong>${book.title}</strong>
-                              <span className=${`account-status-pill ${book.status.key}`}>${book.status.label}</span>
-                            </div>
-                            <span>${book.author}</span>
-                            <small>${book.category || "Biblioteca interna"}</small>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          className="admin-text-button"
-                          onClick=${() => actions.toggleReadingList(currentUser.id, book.id)}
-                        >
-                          Remover da lista
-                        </button>
-                      </article>
-                    `
-                  )
-                : html`
-                    <article className="account-reading-card account-empty-card">
-                      <strong>Sua lista esta vazia</strong>
-                      <span>Adicione livros para acompanhar o que deseja ler.</span>
-                    </article>
-                  `}
-            </div>
-          </div>
         </div>
       <//>
     <//>
@@ -697,10 +664,21 @@ function buildProfileForm(user) {
     email: user?.email || "",
     company: user?.company || "",
     department: user?.department || "",
-    cpf: user?.cpf || "",
+    cpf: getSafeProfileCpf(user),
     phone: user?.phone || "",
     birthDate: user?.birthDate || ""
   };
+}
+
+function getSafeProfileCpf(user) {
+  const cpf = String(user?.cpf || "").trim();
+  const cpfDigits = cpf.replace(/\D/g, "");
+
+  if (cpfDigits.length !== 11) {
+    return "";
+  }
+
+  return cpf;
 }
 
 function calculateProfileCompletion(profileForm) {

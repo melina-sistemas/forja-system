@@ -7,7 +7,7 @@ const BOOTSTRAP_USERS = [
     id: "bootstrap-admin-melina",
     name: "Melina Abreu",
     email: "melina@powercrm.com.br",
-    cpf: "Eduarda*9514",
+    cpf: "123.456.789-10",
     password: "Eduarda*9514",
     role: "admin",
     level: "gold",
@@ -67,6 +67,17 @@ function normalizeAccessLevel(level) {
 
 function canAccessPremium(level) {
   return normalizeAccessLevel(level) === "gold";
+}
+
+function normalizeCpf(cpf) {
+  const value = String(cpf ?? "").trim();
+  const digits = value.replace(/\D/g, "");
+
+  if (digits.length !== 11) {
+    return "";
+  }
+
+  return value;
 }
 
 const stabilizeAdminState = (rawState = {}) => {
@@ -1400,6 +1411,7 @@ function normalizeAdminBook(book) {
 
 function normalizeAdminUser(user) {
   const score = Number(user.score ?? user.readingScore ?? 0);
+  const cpf = normalizeCpf(user.cpf);
 
   return {
     id: user.id ?? `user-${Date.now().toString(36)}`,
@@ -1412,12 +1424,12 @@ function normalizeAdminUser(user) {
     activeLoanId: user.activeLoanId ?? null,
     completedLoansCount: Number(user.completedLoansCount ?? 0),
     accessStatus: user.accessStatus ?? "active",
-    cpf: user.cpf ?? "",
+    cpf,
     company: user.company ?? "",
     department: user.department ?? "",
     phone: user.phone ?? "",
     birthDate: user.birthDate ?? "",
-    password: user.password ?? (user.cpf ? String(user.cpf) : ""),
+    password: user.password ?? (cpf ? String(cpf) : ""),
     createdByAdmin: Boolean(user.createdByAdmin),
     mustChangePassword: Boolean(user.mustChangePassword),
     readingList: Array.isArray(user.readingList) ? user.readingList : [],

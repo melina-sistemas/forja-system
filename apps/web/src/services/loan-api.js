@@ -20,7 +20,7 @@ export function createLoanApiClient(baseUrl) {
       });
     },
 
-    async importBooksPdf(input) {
+    async importBooksPdfText(input) {
       return request(`${baseUrl}/admin/books/import-pdf`, {
         method: "POST",
         body: JSON.stringify(input)

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import htm from "htm";
 import { AdminPageLayout } from "../../components/AdminPageLayout.js";
 import { createLoanApiClient } from "../../services/loan-api.js";
+import { extractPdfTextFromFile } from "../../features/books/pdf-text.js";
 
 const html = htm.bind(React.createElement);
 
@@ -342,11 +343,11 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
         return;
       }
 
-      const contentBase64 = await readFileAsBase64(file);
+      const extractedText = await extractPdfTextFromFile(file);
       const client = createLoanApiClient(apiBaseUrl);
-      const result = await client.importBooksPdf({
+      const result = await client.importBooksPdfText({
         fileName: file.name,
-        contentBase64
+        extractedText
       });
 
       if (result?.success && Array.isArray(result.importedBooks)) {
