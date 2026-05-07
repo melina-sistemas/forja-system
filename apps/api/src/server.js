@@ -11,6 +11,8 @@ import { SupabaseLoanRepository } from "./modules/loans/runtime/supabase-loan-re
 
 const ADMIN_BOOKS_STATE_FILE = new URL("./data/admin-books-state.json", import.meta.url);
 
+loadEnvFile();
+
 export function createApiServer(repository) {
   return createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", "http://localhost");
@@ -20,7 +22,7 @@ export function createApiServer(repository) {
         return sendJson(response, 204, null);
       }
 
-      if (request.method === "GET" && url.pathname === "/health") {
+      if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
         return sendJson(response, 200, {
           status: "ok",
           message: "API da biblioteca ativa."
@@ -415,8 +417,6 @@ const isMainModule =
   );
 
 if (isMainModule) {
-  loadEnvFile();
-
   try {
     const port = Number(process.env.PORT ?? 3001);
     const repository = new SupabaseLoanRepository(getSupabaseConfig());
@@ -455,3 +455,7 @@ function getLocalAddresses() {
 
   return [...new Set(addresses)];
 }
+
+export const server = createApiServer(new SupabaseLoanRepository(getSupabaseConfig()));
+
+export default server;
