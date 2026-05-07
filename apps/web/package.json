@@ -5,10 +5,10 @@
   "type": "module",
   "main": "./server.js",
   "scripts": {
-    "dev": "powershell -ExecutionPolicy Bypass -File ./run-vite.ps1 dev",
-    "build": "powershell -ExecutionPolicy Bypass -File ./run-vite.ps1 build",
-    "preview": "powershell -ExecutionPolicy Bypass -File ./run-vite.ps1 preview",
-    "start": "powershell -ExecutionPolicy Bypass -File ./run-vite.ps1 dev"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite"
   },
   "dependencies": {
     "htm": "^3.1.1",
