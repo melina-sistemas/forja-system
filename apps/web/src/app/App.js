@@ -272,6 +272,27 @@ export function App() {
       setCatalogError(null);
 
       try {
+        if (!apiBaseUrl) {
+          const fallbackCatalog = FALLBACK_CATALOG;
+
+          if (!ignore) {
+            setCatalog(fallbackCatalog);
+            setCatalogError(null);
+            setLoadingCatalog(false);
+          }
+
+          const enrichedBooks = await enrichBooksWithGoogleBooks(fallbackCatalog.books);
+
+          if (!ignore) {
+            setCatalog((current) => ({
+              ...current,
+              books: enrichedBooks
+            }));
+          }
+
+          return;
+        }
+
         const client = createLoanApiClient(apiBaseUrl);
         const data = await client.fetchSeed();
         const nextCatalog = normalizeCatalogPayload(data);
@@ -338,6 +359,25 @@ export function App() {
 
   async function refreshCatalog(preferredBookId) {
     try {
+      if (!apiBaseUrl) {
+        const fallbackCatalog = FALLBACK_CATALOG;
+        setCatalog(fallbackCatalog);
+        setCatalogError(null);
+
+        if (preferredBookId) {
+          setSelectedBookId(preferredBookId);
+        }
+
+        const enrichedBooks = await enrichBooksWithGoogleBooks(fallbackCatalog.books);
+
+        setCatalog((current) => ({
+          ...current,
+          books: enrichedBooks
+        }));
+
+        return;
+      }
+
       const client = createLoanApiClient(apiBaseUrl);
       const data = await client.fetchSeed();
       const nextCatalog = normalizeCatalogPayload(data);
@@ -956,6 +996,12 @@ function buildNameFromEmail(email) {
 }
 
 function getApiBaseUrl() {
+  const hostname = globalThis.location?.hostname ?? "";
+
+  if (import.meta.env.PROD && hostname.endsWith("vercel.app")) {
+    return "";
+  }
+
   return "/api";
 }
 
