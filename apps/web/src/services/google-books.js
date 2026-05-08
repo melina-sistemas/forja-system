@@ -138,7 +138,7 @@ function writeCache(cacheKey, value) {
   }
 }
 
-function createPlaceholderCover(book) {
+export function createPlaceholderCover(book) {
   const palette = getPalette(book.level, book.isPremium);
   const title = escapeXml(book.title);
   const author = escapeXml(book.author);

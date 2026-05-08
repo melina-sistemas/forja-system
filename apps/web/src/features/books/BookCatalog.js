@@ -1,8 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import htm from "htm";
+import { createPlaceholderCover } from "../../services/google-books.js";
 
 const html = htm.bind(React.createElement);
 let pdfJsRuntimePromise = null;
+
+function resolveBookCover(book) {
+  return book.coverUrl || createPlaceholderCover(book);
+}
+
+function handleBookCoverError(event, book) {
+  const image = event.currentTarget;
+
+  if (!image || image.dataset.fallbackApplied === "true") {
+    return;
+  }
+
+  image.dataset.fallbackApplied = "true";
+  image.src = createPlaceholderCover(book);
+}
 
 export function BookCatalog({
   books,
@@ -610,9 +626,10 @@ export function BookCatalog({
               <div className="book-cover-frame">
                 <img
                   className="book-cover"
-                  src=${book.coverUrl}
+                  src=${resolveBookCover(book)}
                   alt=${`Capa do livro ${book.title}`}
                   loading="lazy"
+                  onError=${(event) => handleBookCoverError(event, book)}
                 />
 
                 ${book.isPlaceholderCover
@@ -709,8 +726,9 @@ export function BookCatalog({
                 <div className="book-modal-layout">
                   <div className="book-modal-cover">
                     <img
-                      src=${modalBook.coverUrl}
+                      src=${resolveBookCover(modalBook)}
                       alt=${`Capa ampliada do livro ${modalBook.title}`}
+                      onError=${(event) => handleBookCoverError(event, modalBook)}
                     />
                     ${modalBook.currentReaderLoan
                       ? html`

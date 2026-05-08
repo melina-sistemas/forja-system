@@ -3,6 +3,7 @@ import htm from "htm";
 import { PageLayout } from "../components/PageLayout.js";
 import { Section } from "../components/Section.js";
 import { FeedbackMessage } from "../components/FeedbackMessage.js";
+import { createPlaceholderCover } from "../services/google-books.js";
 
 const html = htm.bind(React.createElement);
 
@@ -648,7 +649,21 @@ function isGoldLevel(level) {
 
 function renderBookCover(book) {
   if (book?.coverUrl) {
-    return html`<img src=${book.coverUrl} alt=${`Capa do livro ${book.title || "FORJA"}`} loading="lazy" />`;
+    return html`<img
+      src=${book.coverUrl}
+      alt=${`Capa do livro ${book.title || "FORJA"}`}
+      loading="lazy"
+      onError=${(event) => {
+        const image = event.currentTarget;
+
+        if (image?.dataset?.fallbackApplied === "true") {
+          return;
+        }
+
+        image.dataset.fallbackApplied = "true";
+        image.src = createPlaceholderCover(book);
+      }}
+    />`;
   }
 
   return html`
