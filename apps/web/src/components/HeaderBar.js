@@ -27,14 +27,17 @@ export function HeaderBar({
   searchEnabled = false,
   onSearchChange = () => {},
   onSearchSuggestionSelect = () => {},
-  onNotificationAction = () => {}
+  onNotificationAction = () => {},
+  onAuthAction = () => {}
 }) {
   const location = useLocation();
   const copy = ROUTE_COPY.find((item) => location.pathname.startsWith(item.match)) ?? ROUTE_COPY[1];
   const initials = getInitials(currentUser?.name || "Admin");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const notificationRef = useRef(null);
+  const profileRef = useRef(null);
   const shouldShowSearch = searchEnabled;
 
   useEffect(() => {
@@ -50,13 +53,22 @@ export function HeaderBar({
   }, [notificationCount]);
 
   useEffect(() => {
+    if (variant === "auth") {
+      setIsProfileOpen(false);
+    }
+  }, [variant]);
+
+  useEffect(() => {
     function handlePointerDown(event) {
-      if (!notificationRef.current) {
-        return;
+      const notificationNode = notificationRef.current;
+      const profileNode = profileRef.current;
+
+      if (notificationNode && !notificationNode.contains(event.target)) {
+        setIsNotificationOpen(false);
       }
 
-      if (!notificationRef.current.contains(event.target)) {
-        setIsNotificationOpen(false);
+      if (profileNode && !profileNode.contains(event.target)) {
+        setIsProfileOpen(false);
       }
     }
 
@@ -200,24 +212,83 @@ export function HeaderBar({
                                 `
                               )
                             : html`<div className="header-notification-empty">Nenhuma notificação nova.</div>`}
+                    </div>
+                  `
+                    : null}
+                </div>
+
+                <div
+                  ref=${profileRef}
+                  className=${`header-profile ${isProfileOpen ? "is-open" : ""}`.trim()}
+                >
+                  <button
+                    type="button"
+                    className="header-profile-button"
+                    aria-label="Usuario"
+                    aria-expanded=${isProfileOpen}
+                    onClick=${() => setIsProfileOpen((current) => !current)}
+                  >
+                    <span className="header-profile-avatar">${initials}</span>
+                  </button>
+                  ${isProfileOpen
+                    ? html`
+                        <div className="header-profile-popover">
+                          <strong>${currentUser?.name || "Admin"}</strong>
+                          <span className="header-profile-level">Ouro</span>
+                          <button
+                            type="button"
+                            className="header-profile-action"
+                            onClick=${() => {
+                              setIsProfileOpen(false);
+                              onAuthAction("logout");
+                            }}
+                          >
+                            Sair
+                          </button>
                         </div>
                       `
                     : null}
                 </div>
-
-                <div className="header-profile" tabIndex="0">
-                  <span className="header-profile-avatar">${initials}</span>
-                  <div className="header-profile-popover">
-                    <strong>${currentUser?.name || "Admin"}</strong>
-                    <span className="header-profile-level">Ouro</span>
-                  </div>
-                </div>
               </div>
             `
           : html`
-              <div className="header-guest-actions">
-                <${Link} to="/entrar" className="header-ghost-link">Entrar</${Link}>
-                <${Link} to="/cadastrar" className="header-primary-link">Cadastrar</${Link}>
+              <div
+                ref=${profileRef}
+                className=${`header-profile header-profile-guest ${isProfileOpen ? "is-open" : ""}`.trim()}
+              >
+                <button
+                  type="button"
+                  className="header-profile-button header-profile-button-guest"
+                  aria-label="Acesso"
+                  aria-expanded=${isProfileOpen}
+                  onClick=${() => setIsProfileOpen((current) => !current)}
+                >
+                  <span className="header-profile-avatar header-profile-avatar-guest">Entrar</span>
+                </button>
+                ${isProfileOpen
+                  ? html`
+                      <div className="header-profile-popover header-profile-popover-guest">
+                        <strong>Acesso</strong>
+                        <span className="header-profile-level header-profile-level-neutral">
+                          Entre ou crie sua conta.
+                        </span>
+                        <${Link}
+                          to="/entrar"
+                          className="header-profile-action"
+                          onClick=${() => setIsProfileOpen(false)}
+                        >
+                          Entrar
+                        </${Link}>
+                        <${Link}
+                          to="/cadastrar"
+                          className="header-profile-action header-profile-action-secondary"
+                          onClick=${() => setIsProfileOpen(false)}
+                        >
+                          Cadastrar
+                        </${Link}>
+                      </div>
+                    `
+                  : null}
               </div>
             `}
       </div>

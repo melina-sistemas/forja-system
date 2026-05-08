@@ -27,6 +27,7 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
   const [feedback, setFeedback] = useState(null);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const isLoginMode = mode === "login";
 
   useEffect(() => {
     setFeedback(null);
@@ -57,15 +58,15 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
   }
 
   const asideTitle =
-    mode === "login"
+    isLoginMode
       ? "Entre para continuar sua jornada de leitura."
       : "Crie seu acesso para evoluir com a biblioteca FORJA.";
   const asideDescription =
-    mode === "login"
+    isLoginMode
       ? "Use o seu e-mail corporativo para acessar livros, progresso e recomendacoes da equipe."
       : "Complete seu cadastro para solicitar acesso ao sistema e acompanhar sua evolucao profissional.";
   const asideItems =
-    mode === "login"
+    isLoginMode
       ? [
           {
             title: "Acesso imediato",
@@ -95,24 +96,36 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
     <${PageLayout} className="auth-layout">
       <section className="auth-page">
         <div className=${`auth-shell auth-shell--${mode}`}> 
-          <aside className=${`auth-aside auth-aside--${mode}`}>
-            <span className="auth-tag">FORJA</span>
-            <h1>${asideTitle}</h1>
-            <p>${asideDescription}</p>
+          ${!isLoginMode
+            ? html`
+                <aside className=${`auth-aside auth-aside--${mode}`}>
+                  <span className="auth-tag">FORJA</span>
+                  <h1>${asideTitle}</h1>
+                  <p>${asideDescription}</p>
 
-            <div className="auth-aside-list">
-              ${asideItems.map(
-                (item) => html`
-                  <article key=${item.title} className="auth-aside-item">
-                    <strong>${item.title}</strong>
-                    <span>${item.description}</span>
-                  </article>
-                `
-              )}
-            </div>
-          </aside>
+                  <div className="auth-aside-list">
+                    ${asideItems.map(
+                      (item) => html`
+                        <article key=${item.title} className="auth-aside-item">
+                          <strong>${item.title}</strong>
+                          <span>${item.description}</span>
+                        </article>
+                      `
+                    )}
+                  </div>
+                </aside>
+              `
+            : null}
 
           <div className=${`auth-card auth-card--${mode}`}>
+            <div className="auth-card-brand">
+              <img src="/forja-icon.png" alt="Forja" />
+              <div>
+                <strong>FORJA</strong>
+                <span>Biblioteca interna</span>
+              </div>
+            </div>
+
             <div className="auth-switch">
               <button
                 type="button"

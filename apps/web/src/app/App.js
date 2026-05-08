@@ -76,6 +76,7 @@ export function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [authUser, setAuthUser] = useState(() => readAuthSession());
+  const [suppressPreviewLogin, setSuppressPreviewLogin] = useState(false);
   const [catalog, setCatalog] = useState(EMPTY_CATALOG);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [catalogError, setCatalogError] = useState(null);
@@ -83,7 +84,8 @@ export function App() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
   const isAuthRoute = location.pathname === "/entrar" || location.pathname === "/cadastrar";
-  const previewAuthUser = authUser || (!isAuthRoute ? PREVIEW_AUTH_USER : null);
+  const previewAuthUser =
+    authUser || (!isAuthRoute && !suppressPreviewLogin ? PREVIEW_AUTH_USER : null);
   const adminPanel = useAdminPanel(catalog, previewAuthUser, apiBaseUrl);
   const isAuthenticated = Boolean(previewAuthUser);
   const isBooksRoute = location.pathname.startsWith("/livros");
@@ -193,7 +195,13 @@ export function App() {
   }, [authUser]);
 
   useEffect(() => {
-    if (!PREVIEW_AUTO_LOGIN || authUser || isAuthRoute || displayUsers.length === 0) {
+    if (
+      !PREVIEW_AUTO_LOGIN ||
+      suppressPreviewLogin ||
+      authUser ||
+      isAuthRoute ||
+      displayUsers.length === 0
+    ) {
       return;
     }
 
@@ -211,7 +219,7 @@ export function App() {
         email: previewUser.email || "admin@forja.local"
       }));
       setSelectedUserId(previewUser.id);
-  }, [authUser, displayUsers, isAuthRoute]);
+  }, [authUser, displayUsers, isAuthRoute, suppressPreviewLogin]);
 
   useEffect(() => {
     if (!authUser || !matchedSessionUser) {
@@ -423,6 +431,7 @@ export function App() {
       level: normalizeAccessLevel(matchedUser.level)
     };
 
+    setSuppressPreviewLogin(false);
     setAuthUser(nextUser);
     setSelectedUserId(nextUser.id);
     navigate("/livros");
@@ -430,6 +439,18 @@ export function App() {
     return {
       success: true,
       message: "Login realizado com sucesso."
+    };
+  }
+
+  function handleLogout() {
+    setSuppressPreviewLogin(true);
+    setAuthUser(null);
+    setSelectedUserId("");
+    navigate("/entrar");
+
+    return {
+      success: true,
+      message: "Voce saiu da sua conta."
     };
   }
 
@@ -487,6 +508,11 @@ export function App() {
               } else if (suggestion.reportPath) {
                 navigate(suggestion.reportPath);
               }
+            }
+          }}
+          onAuthAction=${(action) => {
+            if (action === "logout") {
+              handleLogout();
             }
           }}
         />
