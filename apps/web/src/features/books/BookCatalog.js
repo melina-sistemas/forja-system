@@ -740,9 +740,13 @@ export function BookCatalog({
                       )}
                     </div>
 
-                    <p className="book-modal-description">
-                      ${modalBook.description || modalBook.summary}
-                    </p>
+                    ${modalBook.description
+                      ? html`
+                          <p className="book-modal-description">
+                            ${modalBook.description}
+                          </p>
+                        `
+                      : null}
 
                     ${modalBook.isPremium
                       ? html`
@@ -825,15 +829,19 @@ export function BookCatalog({
                           </div>
                         `
                       : html`
-                          <div className="modal-borrow-panel">
-                            <strong>
+                        <div className="modal-borrow-panel">
+                          <strong>
+                            ${modalBook.type === "digital"
+                              ? "Acesso imediato"
+                              : modalBook.hasActiveBorrowedLoan
+                              ? "Reserva aguardando retorno"
+                              : "Pronto para solicitacao"}
+                          </strong>
+                            <span>
                               ${modalBook.type === "digital"
-                                ? "Acesso imediato"
-                                : modalBook.hasActiveBorrowedLoan
-                                ? "Reserva aguardando retorno"
-                                : "Pronto para solicitacao"}
-                            </strong>
-                            <span>${modalBook.summary}</span>
+                                ? "Leia este titulo diretamente no sistema."
+                                : "Veja os detalhes e solicite este livro quando estiver pronto."}
+                            </span>
                             ${modalBook.hasActiveBorrowedLoan && modalBook.type === "physical"
                               ? html`<small>Voce ja possui leitura ativa. Depois de devolver, confirme este livro.</small>`
                               : null}
@@ -1024,10 +1032,7 @@ export function BookCatalog({
                                         className="reader-page-canvas"
                                         style=${{
                                           width: "auto",
-                                          height: "auto",
-                                          maxWidth: "100%",
-                                          maxHeight: "100%",
-                                          objectFit: "contain"
+                                          height: "auto"
                                         }}
                                         aria-label=${`Pagina ${readerPage} do livro ${readerBook.title}`}
                                       ></canvas>
