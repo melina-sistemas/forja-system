@@ -6,6 +6,7 @@
   "main": "./src/server.mjs",
   "scripts": {
     "dev": "node ./src/server.js",
+    "build": "node -e \"process.exit(0)\"",
     "start": "node ./src/server.js"
   }
 }
