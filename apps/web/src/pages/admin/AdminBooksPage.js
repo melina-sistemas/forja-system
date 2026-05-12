@@ -82,7 +82,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
         (book.isActive && Number(book.availableQuantity ?? 0) > 0)
     ).length;
     const activeUsers = users.filter(
-      (user) => user.role === "staff" || user.role === "admin"
+      (user) => user.role === "user" || user.role === "staff" || user.role === "admin"
     ).length;
     const completedLoans = loans.filter((loan) => loan.status === "RETURNED").length;
     const ranking = [...users]

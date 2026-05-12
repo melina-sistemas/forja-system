@@ -11,7 +11,7 @@ const BOOTSTRAP_USERS = [
     password: "Eduarda*9514",
     role: "admin",
     level: "gold",
-    accessStatus: "active",
+    accessStatus: "approved",
     createdByAdmin: true,
     mustChangePassword: false,
     readingList: []
@@ -62,6 +62,32 @@ function normalizeAccessLevel(level) {
       return "bronze";
     default:
       return normalized || "bronze";
+  }
+}
+
+function normalizeUserRole(role) {
+  const normalized = String(role ?? "").trim().toLowerCase();
+
+  if (normalized === "admin") {
+    return "admin";
+  }
+
+  return "user";
+}
+
+function normalizeUserAccessStatus(status) {
+  const normalized = String(status ?? "").trim().toLowerCase();
+
+  switch (normalized) {
+    case "approved":
+    case "active":
+      return "approved";
+    case "pending":
+    case "rejected":
+    case "blocked":
+      return normalized;
+    default:
+      return "pending";
   }
 }
 
@@ -276,7 +302,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         return current;
       }
 
-      const nextUser = normalizeAdminUser({
+  const nextUser = normalizeAdminUser({
         id: `user-request-${Date.now().toString(36)}`,
         name: input.fullName,
         email: normalizedEmail,
@@ -286,7 +312,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         phone: input.phone,
         birthDate: input.birthDate,
         password: input.password,
-        role: "staff",
+        role: "user",
         level: "bronze",
         accessStatus: "pending",
         createdByAdmin: false,
@@ -335,9 +361,9 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         cpf: input.cpf,
         company: input.company,
         department: input.department,
-        role: input.role || "staff",
+        role: input.role || "user",
         level: input.level || "bronze",
-        accessStatus: "active",
+        accessStatus: "approved",
         createdByAdmin: true,
         mustChangePassword: true,
         password: input.cpf,
@@ -364,10 +390,10 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         ...current,
         users: current.users.map((user) =>
           user.id === userId
-            ? normalizeAdminUser({
-                ...user,
-                accessStatus: "active"
-              })
+              ? normalizeAdminUser({
+                  ...user,
+                  accessStatus: "approved"
+                })
             : user
         )
       })
@@ -380,10 +406,10 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         ...current,
         users: current.users.map((user) =>
           user.id === userId
-            ? normalizeAdminUser({
-                ...user,
-                accessStatus: "rejected"
-              })
+              ? normalizeAdminUser({
+                  ...user,
+                  accessStatus: "rejected"
+                })
             : user
         )
       })
@@ -396,10 +422,10 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
         ...current,
         users: current.users.map((user) =>
           user.id === userId
-            ? normalizeAdminUser({
-                ...user,
-                accessStatus: user.accessStatus === "blocked" ? "active" : "blocked"
-              })
+              ? normalizeAdminUser({
+                  ...user,
+                  accessStatus: user.accessStatus === "blocked" ? "approved" : "blocked"
+                })
             : user
         )
       })
@@ -1200,7 +1226,9 @@ function assignBookToUser(userId, bookId) {
 
   return {
     currentUser,
-    isAdmin: currentUser?.role === "admin",
+    isAdmin:
+      currentUser?.role === "admin" &&
+      normalizeUserAccessStatus(currentUser?.status ?? currentUser?.accessStatus) === "approved",
     books: state.books,
     users: state.users,
     rules: state.rules,
@@ -1412,18 +1440,21 @@ function normalizeAdminBook(book) {
 function normalizeAdminUser(user) {
   const score = Number(user.score ?? user.readingScore ?? 0);
   const cpf = normalizeCpf(user.cpf);
+  const role = normalizeUserRole(user.role);
+  const accessStatus = normalizeUserAccessStatus(user.accessStatus ?? user.status);
 
   return {
     id: user.id ?? `user-${Date.now().toString(36)}`,
     name: user.name ?? "",
     email: user.email ?? "",
-    role: user.role === "admin" ? "admin" : "staff",
+    role,
     level: normalizeAccessLevel(user.level),
     score,
     readingScore: score,
     activeLoanId: user.activeLoanId ?? null,
     completedLoansCount: Number(user.completedLoansCount ?? 0),
-    accessStatus: user.accessStatus ?? "active",
+    accessStatus,
+    status: accessStatus,
     cpf,
     company: user.company ?? "",
     department: user.department ?? "",
@@ -1827,7 +1858,8 @@ function fromCatalogUser(user) {
   return {
     ...user,
     score: user.readingScore,
-    accessStatus: "active"
+    accessStatus: normalizeUserAccessStatus(user.accessStatus ?? user.status ?? "approved"),
+    status: normalizeUserAccessStatus(user.accessStatus ?? user.status ?? "approved")
   };
 }
 

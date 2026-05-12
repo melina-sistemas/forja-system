@@ -1976,6 +1976,11 @@ textarea {
   color: #075b8b;
 }
 
+.admin-user-badge.user {
+  background: rgba(6, 147, 227, 0.08);
+  color: #075b8b;
+}
+
 .admin-user-badge.admin {
   background: rgba(245, 158, 11, 0.14);
   color: #9a6700;
@@ -1996,7 +2001,8 @@ textarea {
   color: #9a6700;
 }
 
-.admin-user-badge.status.active {
+.admin-user-badge.status.active,
+.admin-user-badge.status.approved {
   background: rgba(22, 163, 74, 0.14);
   color: #15803d;
 }
@@ -2169,6 +2175,55 @@ textarea {
 
 .admin-book-indication-list strong {
   font-size: 0.95rem;
+}
+
+.admin-approval-card {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-approval-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-approval-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(6, 147, 227, 0.04);
+  border: 1px solid rgba(6, 147, 227, 0.08);
+}
+
+.admin-approval-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-approval-copy strong {
+  font-size: 0.98rem;
+}
+
+.admin-approval-copy span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.admin-approval-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-approval-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
 .admin-recommended-books {

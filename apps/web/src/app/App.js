@@ -222,7 +222,23 @@ export function App() {
   }, [authUser]);
 
   useEffect(() => {
-    if (!authUser || !matchedSessionUser) {
+    if (loadingCatalog || !authUser) {
+      return;
+    }
+
+    if (!matchedSessionUser) {
+      setAuthUser(null);
+      navigate("/entrar", { replace: true });
+      return;
+    }
+
+    const matchedStatus = normalizeAccessStatus(
+      matchedSessionUser.status ?? matchedSessionUser.accessStatus
+    );
+
+    if (matchedStatus === "rejected" || matchedStatus === "blocked") {
+      setAuthUser(null);
+      navigate("/entrar", { replace: true });
       return;
     }
 
@@ -236,7 +252,7 @@ export function App() {
         matchedSessionUser.email,
         matchedSessionUser.role,
         matchedSessionUser.level,
-        normalizeAccessStatus(matchedSessionUser.status ?? matchedSessionUser.accessStatus),
+        matchedStatus,
         matchedSessionUser.company,
         matchedSessionUser.department,
         matchedSessionUser.phone,
@@ -260,9 +276,14 @@ export function App() {
         return current;
       }
 
-      return normalizeAuthUser({ ...current, ...matchedSessionUser });
+      return normalizeAuthUser({
+        ...current,
+        ...matchedSessionUser,
+        status: matchedStatus,
+        accessStatus: matchedStatus
+      });
     });
-  }, [authUser, matchedSessionUser]);
+  }, [authUser, loadingCatalog, matchedSessionUser, navigate]);
 
   useEffect(() => {
     let ignore = false;
@@ -1022,8 +1043,18 @@ function PendingApprovalPage({ onLogout }) {
 function readAuthSession() {
   try {
     const raw = globalThis.localStorage?.getItem(AUTH_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
 
-    return raw ? normalizeAuthUser(JSON.parse(raw)) : null;
+    const parsed = JSON.parse(raw);
+    const normalized = normalizeAuthUser(parsed);
+
+    if (!normalized?.id || !normalized?.email) {
+      return null;
+    }
+
+    return normalized;
   } catch {
     return null;
   }
@@ -1036,7 +1067,16 @@ function writeAuthSession(authUser) {
     }
 
     if (authUser) {
-      globalThis.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
+      const sessionSnapshot = {
+        id: authUser.id,
+        email: authUser.email,
+        name: authUser.name,
+        role: normalizeAuthRole(authUser.role),
+        level: normalizeAccessLevel(authUser.level),
+        status: normalizeAccessStatus(authUser.status ?? authUser.accessStatus)
+      };
+
+      globalThis.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(sessionSnapshot));
     } else {
       globalThis.localStorage.removeItem(AUTH_STORAGE_KEY);
     }

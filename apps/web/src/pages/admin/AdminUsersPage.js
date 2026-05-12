@@ -24,7 +24,7 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
     cpf: "",
     company: "",
     department: "",
-    role: "staff",
+    role: "user",
     level: "bronze"
   });
 
@@ -36,6 +36,13 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
         .filter((user) => (statusFilter === "all" ? true : user.accessStatus === statusFilter))
         .sort((left, right) => left.name.localeCompare(right.name, "pt-BR")),
     [levelFilter, roleFilter, statusFilter, users]
+  );
+  const pendingUsers = useMemo(
+    () =>
+      users
+        .filter((user) => user.accessStatus === "pending")
+        .sort((left, right) => left.name.localeCompare(right.name, "pt-BR")),
+    [users]
   );
 
   const selectedUser = users.find((user) => user.id === selectedUserId) ?? null;
@@ -97,7 +104,7 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         setDraftFilters((current) => ({ ...current, role: event.target.value }))}
                     >
                       <option value="all">Todos</option>
-                      <option value="staff">Staff</option>
+                      <option value="user">Usuario</option>
                       <option value="admin">Admin</option>
                     </select>
                   </label>
@@ -124,7 +131,7 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         setDraftFilters((current) => ({ ...current, status: event.target.value }))}
                     >
                       <option value="all">Todos</option>
-                      <option value="active">Ativo</option>
+                      <option value="approved">Ativo</option>
                       <option value="blocked">Bloqueado</option>
                       <option value="pending">Pendente</option>
                       <option value="rejected">Recusado</option>
@@ -177,6 +184,56 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
       description="Gerencie o time, acompanhe a jornada de leitura e ajuste os dados de cada colaborador."
       actions=${actionsBar}
     >
+      <article className="admin-card admin-approval-card">
+        <div className="admin-card-header admin-card-header-block">
+          <div>
+            <h3>Usuarios pendentes</h3>
+            <p>Revise os cadastros novos antes de liberar o acesso ao sistema.</p>
+          </div>
+          <span className="admin-pill">${pendingUsers.length} pendencias</span>
+        </div>
+
+        ${pendingUsers.length > 0
+          ? html`
+              <div className="admin-approval-list">
+                ${pendingUsers.map(
+                  (user) => html`
+                    <article key=${user.id} className="admin-approval-item">
+                      <div className="admin-approval-copy">
+                        <strong>${user.name}</strong>
+                        <span>${user.email}</span>
+                      </div>
+
+                      <div className="admin-approval-meta">
+                        <span className=${`admin-user-badge ${user.role}`}>${translateRole(user.role)}</span>
+                        <span className=${`admin-user-badge ${user.level}`}>${translateLevel(user.level)}</span>
+                        <span className="admin-user-badge status pending">Pendente</span>
+                      </div>
+
+                      <div className="admin-approval-actions">
+                        <button
+                          type="button"
+                          className="admin-primary"
+                          onClick=${() => actions.approveUser(user.id)}
+                        >
+                          Aprovar
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-secondary"
+                          onClick=${() => actions.rejectUser(user.id)}
+                        >
+                          Reprovar
+                        </button>
+                      </div>
+                    </article>
+                  `
+                )}
+              </div>
+            `
+          : html`<p className="admin-helper">Nenhum usuario pendente no momento.</p>`}
+      </article>
+
       <article className="admin-card admin-user-directory-card">
         <div className="admin-card-header admin-card-header-block">
           <div>
@@ -290,7 +347,7 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                   cpf: "",
                   company: "",
                   department: "",
-                  role: "staff",
+                  role: "user",
                   level: "bronze"
                 });
                 setShowCreateModal(false);
@@ -396,16 +453,16 @@ function renderCreateUserModal({
             />
           </label>
 
-          <label>
-            <span>Perfil</span>
-            <select
-              value=${adminCreateForm.role}
-              onChange=${(event) => onChange((current) => ({ ...current, role: event.target.value }))}
-            >
-              <option value="staff">Staff</option>
+                  <label>
+                    <span>Perfil</span>
+                    <select
+                      value=${adminCreateForm.role}
+                      onChange=${(event) => onChange((current) => ({ ...current, role: event.target.value }))}
+                    >
+              <option value="user">Usuario</option>
               <option value="admin">Admin</option>
-            </select>
-          </label>
+                    </select>
+                  </label>
 
           <label>
             <span>Nivel</span>
@@ -519,11 +576,11 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
               <label>
                 <span>Status</span>
                 <select
-                  value=${user.accessStatus || "active"}
+                  value=${user.accessStatus || "approved"}
                   onChange=${(event) =>
                     actions.updateUser(user.id, { accessStatus: event.target.value })}
                 >
-                  <option value="active">Ativo</option>
+                  <option value="approved">Ativo</option>
                   <option value="blocked">Bloqueado</option>
                   <option value="pending">Pendente</option>
                   <option value="rejected">Recusado</option>
@@ -536,7 +593,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                   value=${user.role}
                   onChange=${(event) => actions.updateUser(user.id, { role: event.target.value })}
                 >
-                  <option value="staff">Staff</option>
+                  <option value="user">Usuario</option>
                   <option value="admin">Admin</option>
                 </select>
               </label>
@@ -856,7 +913,7 @@ function buildUserHistory({ user, loans, books, returns }) {
 }
 
 function translateRole(role) {
-  return role === "admin" ? "Admin" : "Staff";
+  return role === "admin" ? "Admin" : "Usuario";
 }
 
 function translateLevel(level) {
@@ -871,15 +928,16 @@ function translateLevel(level) {
 }
 
 function translateStatus(status) {
-  switch (status) {
-    case "pending":
-      return "Pendente";
-    case "blocked":
-      return "Bloqueado";
-    case "rejected":
-      return "Recusado";
-    case "active":
-      return "Ativo";
+    switch (status) {
+      case "pending":
+        return "Pendente";
+      case "approved":
+      case "active":
+        return "Ativo";
+      case "blocked":
+        return "Bloqueado";
+      case "rejected":
+        return "Recusado";
     default:
       return "Sem status";
   }
