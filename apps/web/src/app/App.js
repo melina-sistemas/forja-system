@@ -3,6 +3,7 @@ import htm from "htm";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar.js";
 import { HeaderBar } from "../components/HeaderBar.js";
+import { PageLayout } from "../components/PageLayout.js";
 import { AuthPage } from "../features/auth/AuthPage.js";
 import { useAdminPanel } from "../features/admin/admin-state.js";
 import { enrichBooksWithGoogleBooks } from "../services/google-books.js";
@@ -33,15 +34,6 @@ const EMPTY_CATALOG = {
 };
 const FALLBACK_CATALOG = normalizeCatalogPayload(createDevelopmentPlanCatalog());
 const AUTH_STORAGE_KEY = "forja-auth-session-v1";
-const PREVIEW_AUTO_LOGIN = true;
-const PREVIEW_AUTH_USER = {
-  id: "preview-admin",
-  name: "Melina Abreu",
-  email: "melina@powercrm.com.br",
-  role: "admin",
-  level: "gold",
-  accessStatus: "active"
-};
 
 function normalizeAccessLevel(level) {
   const normalized = String(level ?? "").trim().toLowerCase();
@@ -65,10 +57,42 @@ function normalizeAuthUser(user) {
     return null;
   }
 
+  const accessStatus = normalizeAccessStatus(user.status ?? user.accessStatus);
+
   return {
     ...user,
-    level: normalizeAccessLevel(user.level)
+    role: normalizeAuthRole(user.role),
+    level: normalizeAccessLevel(user.level),
+    status: accessStatus,
+    accessStatus
   };
+}
+
+function normalizeAuthRole(role) {
+  return role === "admin" ? "admin" : "user";
+}
+
+function normalizeAccessStatus(status) {
+  const normalized = String(status ?? "").trim().toLowerCase();
+
+  if (normalized === "active") {
+    return "approved";
+  }
+
+  return normalized || "pending";
+}
+
+function isApprovedAuthUser(user) {
+  return normalizeAccessStatus(user?.status ?? user?.accessStatus) === "approved";
+}
+
+function isPendingAuthUser(user) {
+  return normalizeAccessStatus(user?.status ?? user?.accessStatus) === "pending";
+}
+
+function isRejectedOrBlockedAuthUser(user) {
+  const status = normalizeAccessStatus(user?.status ?? user?.accessStatus);
+  return status === "rejected" || status === "blocked";
 }
 
 export function App() {
@@ -76,18 +100,21 @@ export function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [authUser, setAuthUser] = useState(() => readAuthSession());
-  const [suppressPreviewLogin, setSuppressPreviewLogin] = useState(false);
   const [catalog, setCatalog] = useState(EMPTY_CATALOG);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [catalogError, setCatalogError] = useState(null);
   const [selectedBookId, setSelectedBookId] = useState("");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
-  const isAuthRoute = location.pathname === "/entrar" || location.pathname === "/cadastrar";
-  const previewAuthUser =
-    authUser || (!isAuthRoute && !suppressPreviewLogin ? PREVIEW_AUTH_USER : null);
-  const adminPanel = useAdminPanel(catalog, previewAuthUser, apiBaseUrl);
-  const isAuthenticated = Boolean(previewAuthUser);
+  const isAuthRoute =
+    location.pathname === "/entrar" ||
+    location.pathname === "/cadastrar" ||
+    location.pathname === "/cadastro/aguardando-aprovacao" ||
+    location.pathname === "/cadastro/solicitacao-enviada";
+  const activeAuthUser = normalizeAuthUser(authUser);
+  const adminPanel = useAdminPanel(catalog, activeAuthUser, apiBaseUrl);
+  const isAuthenticated = Boolean(activeAuthUser);
+  const hasApprovedAccess = isAuthenticated && isApprovedAuthUser(activeAuthUser);
   const isBooksRoute = location.pathname.startsWith("/livros");
   const isUsersRoute = location.pathname.startsWith("/usuarios");
   const isReportsRoute = location.pathname.startsWith("/relatorios");
@@ -157,12 +184,12 @@ export function App() {
       (user) => user.email && authUser?.email && user.email.toLowerCase() === authUser.email.toLowerCase()
     ) ||
     null;
-  const currentReaderId = isAuthenticated
+  const currentReaderId = hasApprovedAccess
     ? selectedUserId || matchedSessionUser?.id || displayUsers[0]?.id || ""
     : "";
   const currentReader =
-    isAuthenticated ? displayUsers.find((user) => user.id === currentReaderId) ?? null : null;
-  const currentReaderLoans = isAuthenticated
+    hasApprovedAccess ? displayUsers.find((user) => user.id === currentReaderId) ?? null : null;
+  const currentReaderLoans = hasApprovedAccess
     ? libraryLoans.filter((loan) => loan.userId === currentReaderId && loan.status !== "RETURNED")
     : [];
 
@@ -178,14 +205,14 @@ export function App() {
     [libraryLoans]
   );
 
-  const borrowerId = isAuthenticated ? currentReaderId : "";
+  const borrowerId = hasApprovedAccess ? currentReaderId : "";
   const visibleNotifications = useMemo(() => {
-    if (!previewAuthUser) {
+    if (!activeAuthUser || !hasApprovedAccess) {
       return [];
     }
 
-    return displayNotifications.filter((notification) => notification.userId === previewAuthUser.id);
-  }, [displayNotifications, previewAuthUser]);
+    return displayNotifications.filter((notification) => notification.userId === activeAuthUser.id);
+  }, [activeAuthUser, displayNotifications, hasApprovedAccess]);
   const unreadNotificationCount = visibleNotifications.filter(
     (notification) => !notification.readAt
   ).length;
@@ -193,33 +220,6 @@ export function App() {
   useEffect(() => {
     writeAuthSession(authUser);
   }, [authUser]);
-
-  useEffect(() => {
-    if (
-      !PREVIEW_AUTO_LOGIN ||
-      suppressPreviewLogin ||
-      authUser ||
-      isAuthRoute ||
-      displayUsers.length === 0
-    ) {
-      return;
-    }
-
-    const previewUser =
-      displayUsers.find((user) => user.accessStatus === "active" && user.role === "admin") ||
-      displayUsers.find((user) => user.accessStatus === "active") ||
-      null;
-
-    if (!previewUser) {
-      return;
-    }
-
-      setAuthUser(normalizeAuthUser({
-        ...previewUser,
-        email: previewUser.email || "admin@forja.local"
-      }));
-      setSelectedUserId(previewUser.id);
-  }, [authUser, displayUsers, isAuthRoute, suppressPreviewLogin]);
 
   useEffect(() => {
     if (!authUser || !matchedSessionUser) {
@@ -236,7 +236,7 @@ export function App() {
         matchedSessionUser.email,
         matchedSessionUser.role,
         matchedSessionUser.level,
-        matchedSessionUser.accessStatus,
+        normalizeAccessStatus(matchedSessionUser.status ?? matchedSessionUser.accessStatus),
         matchedSessionUser.company,
         matchedSessionUser.department,
         matchedSessionUser.phone,
@@ -248,7 +248,7 @@ export function App() {
         current.email,
         current.role,
         current.level,
-        current.accessStatus,
+        normalizeAccessStatus(current.status ?? current.accessStatus),
         current.company,
         current.department,
         current.phone,
@@ -260,7 +260,7 @@ export function App() {
         return current;
       }
 
-      return { ...current, ...matchedSessionUser };
+      return normalizeAuthUser({ ...current, ...matchedSessionUser });
     });
   }, [authUser, matchedSessionUser]);
 
@@ -423,7 +423,7 @@ export function App() {
     loanActions: adminPanel.actions,
     currentReader,
     currentReaderLoans,
-    isAuthenticated
+    hasApprovedAccess
   };
   function handleLogin(credentials) {
     const normalizedEmail = String(credentials?.email || "").trim().toLowerCase();
@@ -439,22 +439,7 @@ export function App() {
       };
     }
 
-    if (matchedUser.accessStatus === "pending") {
-      return {
-        success: false,
-        message: "Seu cadastro ainda aguarda aprovacao de um administrador."
-      };
-    }
-
-    if (matchedUser.accessStatus === "rejected" || matchedUser.accessStatus === "blocked") {
-      return {
-        success: false,
-        message:
-          matchedUser.accessStatus === "blocked"
-            ? "Seu acesso esta bloqueado no momento. Fale com um administrador da FORJA."
-            : "Seu cadastro foi recusado. Fale com um administrador da FORJA."
-      };
-    }
+    const matchedStatus = normalizeAccessStatus(matchedUser.status ?? matchedUser.accessStatus);
 
     if (String(matchedUser.password || "") !== String(credentials?.password || "")) {
       return {
@@ -463,16 +448,42 @@ export function App() {
       };
     }
 
+    if (matchedStatus === "pending") {
+      const nextUser = normalizeAuthUser({
+        ...matchedUser,
+        email: normalizedEmail || matchedUser.email || ""
+      });
+      setAuthUser(nextUser);
+      setSelectedUserId("");
+      navigate("/cadastro/aguardando-aprovacao");
+
+      return {
+        success: true,
+        message: "Seu cadastro ainda aguarda aprovacao de um administrador."
+      };
+    }
+
+    if (matchedStatus === "rejected" || matchedStatus === "blocked") {
+      return {
+        success: false,
+        message:
+          matchedStatus === "blocked"
+            ? "Seu acesso esta bloqueado no momento. Fale com um administrador da FORJA."
+            : "Seu cadastro foi recusado. Fale com um administrador da FORJA."
+      };
+    }
+
     const nextUser = {
       ...matchedUser,
       id: matchedUser.id,
       name: matchedUser.name || buildNameFromEmail(normalizedEmail) || "Leitor FORJA",
       email: normalizedEmail || matchedUser.email || "",
-      level: normalizeAccessLevel(matchedUser.level)
+      level: normalizeAccessLevel(matchedUser.level),
+      status: matchedStatus,
+      accessStatus: matchedStatus
     };
 
-    setSuppressPreviewLogin(false);
-    setAuthUser(nextUser);
+    setAuthUser(normalizeAuthUser(nextUser));
     setSelectedUserId(nextUser.id);
     navigate("/livros");
 
@@ -483,7 +494,6 @@ export function App() {
   }
 
   function handleLogout() {
-    setSuppressPreviewLogin(true);
     setAuthUser(null);
     setSelectedUserId("");
     navigate("/entrar");
@@ -565,30 +575,30 @@ export function App() {
           />
           <${Route}
             path="/livros"
-            element=${React.createElement(BooksPage, {
+            element=${renderReaderPage(activeAuthUser, React.createElement(BooksPage, {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Todos os livros",
               subtitle: "Explore todo o catalogo da biblioteca e abra qualquer titulo para emprestimo.",
               books: filteredLibraryBooks
-            })}
+            }))}
           />
           <${Route}
             path="/livros/todos"
-            element=${React.createElement(BooksPage, {
+            element=${renderReaderPage(activeAuthUser, React.createElement(BooksPage, {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Todos os livros",
               subtitle: "Explore todo o catalogo da biblioteca e abra qualquer titulo para emprestimo.",
               books: filteredLibraryBooks
-            })}
+            }))}
           />
           <${Route}
             path="/livros/disponiveis"
             element=${renderProtectedPage(
-              isAuthenticated,
+              activeAuthUser,
               React.createElement(BooksPage, {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
@@ -602,7 +612,7 @@ export function App() {
           <${Route}
             path="/livros/emprestados"
             element=${renderProtectedPage(
-              isAuthenticated,
+              activeAuthUser,
               React.createElement(BooksPage, {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
@@ -616,7 +626,7 @@ export function App() {
           <${Route}
             path="/livros/premium"
             element=${renderProtectedPage(
-              isAuthenticated,
+              activeAuthUser,
               React.createElement(BooksPage, {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
@@ -630,7 +640,7 @@ export function App() {
           <${Route}
             path="/usuarios"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminUsersPage, {
               users: filteredUsers,
@@ -646,7 +656,7 @@ export function App() {
           <${Route}
             path="/minha-conta"
             element=${renderProtectedPage(
-              isAuthenticated,
+              activeAuthUser,
               React.createElement(MyAccountPage, {
               currentUser: matchedSessionUser ?? authUser,
               books: libraryBooks,
@@ -660,7 +670,7 @@ export function App() {
           <${Route}
             path="/usuarios/ranking"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminUsersPage, {
               users: filteredUsers,
@@ -676,7 +686,7 @@ export function App() {
           <${Route}
             path="/usuarios/perfil"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminUsersPage, {
               users: filteredUsers,
@@ -692,7 +702,7 @@ export function App() {
           <${Route}
             path="/usuarios/historico"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminUsersPage, {
               users: filteredUsers,
@@ -708,7 +718,7 @@ export function App() {
           <${Route}
             path="/desempenho"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(PerformancePage, {
                 users: displayUsers,
@@ -722,7 +732,7 @@ export function App() {
           <${Route}
             path="/desempenho/metricas-gerais"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(PerformancePage, {
                 users: displayUsers,
@@ -736,7 +746,7 @@ export function App() {
           <${Route}
             path="/desempenho/evolucao"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(PerformancePage, {
                 users: displayUsers,
@@ -750,7 +760,7 @@ export function App() {
           <${Route}
             path="/relatorios"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(ReportsPage, {
                 users: reportsSearchData.users,
@@ -764,7 +774,7 @@ export function App() {
           <${Route}
             path="/relatorios/dashboard"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(ReportsPage, {
                 users: reportsSearchData.users,
@@ -778,7 +788,7 @@ export function App() {
           <${Route}
             path="/relatorios/qualidade-respostas"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(ReportsPage, {
                 users: reportsSearchData.users,
@@ -792,7 +802,10 @@ export function App() {
           <${Route}
             path="/entrar"
             element=${isAuthenticated
-              ? React.createElement(Navigate, { to: "/livros", replace: true })
+              ? React.createElement(Navigate, {
+                  to: hasApprovedAccess ? "/livros" : "/cadastro/aguardando-aprovacao",
+                  replace: true
+                })
               : React.createElement(AuthPage, {
                   mode: "login",
                   onLogin: handleLogin,
@@ -805,7 +818,10 @@ export function App() {
           <${Route}
             path="/cadastrar"
             element=${isAuthenticated
-              ? React.createElement(Navigate, { to: "/livros", replace: true })
+              ? React.createElement(Navigate, {
+                  to: hasApprovedAccess ? "/livros" : "/cadastro/aguardando-aprovacao",
+                  replace: true
+                })
               : React.createElement(AuthPage, {
                   mode: "register",
                   onLogin: handleLogin,
@@ -820,16 +836,20 @@ export function App() {
             element=${React.createElement(AccountRequestSentPage)}
           />
           <${Route}
+            path="/cadastro/aguardando-aprovacao"
+            element=${React.createElement(PendingApprovalPage, { onLogout: handleLogout })}
+          />
+          <${Route}
             path="/admin"
             element=${React.createElement(Navigate, {
-              to: isAuthenticated ? "/admin/books" : "/livros",
+              to: hasApprovedAccess ? "/admin/books" : "/livros",
               replace: true
             })}
           />
           <${Route}
             path="/admin/books"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminBooksPage, {
                 books: adminPanel.books,
@@ -843,7 +863,7 @@ export function App() {
           <${Route}
             path="/admin/requests"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminRequestsPage, {
                 loans: adminPanel.loans,
@@ -856,7 +876,7 @@ export function App() {
           <${Route}
             path="/admin/users"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminUsersPage, {
                 users: adminPanel.users,
@@ -869,7 +889,7 @@ export function App() {
           <${Route}
             path="/admin/rules"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminRulesPage, {
                 rules: adminPanel.rules,
@@ -880,7 +900,7 @@ export function App() {
           <${Route}
             path="/admin/gamification"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminGamificationPage, {
                 gamification: adminPanel.gamification,
@@ -891,7 +911,7 @@ export function App() {
           <${Route}
             path="/admin/loans"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminLoansPage, {
                 loans: adminPanel.loans,
@@ -904,7 +924,7 @@ export function App() {
           <${Route}
             path="/admin/monitoring"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminMonitoringPage, {
                 monitoring: adminPanel.monitoring
@@ -914,7 +934,7 @@ export function App() {
           <${Route}
             path="/admin/settings"
             element=${renderAdminPage(
-              isAuthenticated,
+              activeAuthUser,
               adminPanel,
               React.createElement(AdminSettingsPage, {
                 settings: adminPanel.settings,
@@ -935,24 +955,68 @@ export function App() {
 
 export default App;
 
-function renderProtectedPage(isAuthenticated, page) {
-  if (!isAuthenticated) {
-    return React.createElement(Navigate, { to: "/livros", replace: true });
+function renderReaderPage(authUser, page) {
+  if (isPendingAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
+  }
+
+  if (isRejectedOrBlockedAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
   return page;
 }
 
-function renderAdminPage(isAuthenticated, adminPanel, page) {
-  if (!isAuthenticated) {
-    return React.createElement(Navigate, { to: "/livros", replace: true });
+function renderProtectedPage(authUser, page) {
+  if (!authUser) {
+    return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
-  if (adminPanel.currentUser?.role !== "admin" || !adminPanel.isAdmin) {
+  if (!isApprovedAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
+  }
+
+  return page;
+}
+
+function renderAdminPage(authUser, adminPanel, page) {
+  if (!authUser) {
+    return React.createElement(Navigate, { to: "/entrar", replace: true });
+  }
+
+  if (!isApprovedAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
+  }
+
+  if (authUser.role !== "admin" || adminPanel.currentUser?.role !== "admin" || !adminPanel.isAdmin) {
     return React.createElement(AdminAccessDeniedPage);
   }
 
   return page;
+}
+
+function PendingApprovalPage({ onLogout }) {
+  return html`
+    <${PageLayout} className="auth-layout">
+      <section className="auth-page">
+        <div className="auth-shell-simple">
+          <div className="auth-card auth-card-minimal auth-pending-card">
+            <div className="auth-confirmation">
+              <span className="auth-confirmation-icon auth-confirmation-icon-warning">!</span>
+              <h1>Seu cadastro esta aguardando aprovacao do administrador.</h1>
+              <p>
+                Assim que um admin liberar o acesso, voce podera entrar normalmente e usar a
+                biblioteca interna.
+              </p>
+              <button type="button" className="auth-submit" onClick=${onLogout}>
+                Voltar para o login
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    <//>
+  `;
 }
 
 function readAuthSession() {
