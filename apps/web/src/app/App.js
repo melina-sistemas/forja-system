@@ -79,6 +79,28 @@ function normalizeAccessStatus(status) {
     return "approved";
   }
 
+  if (normalized === "aprovado" || normalized === "ativo") {
+    return "approved";
+  }
+
+  if (
+    normalized === "pendente" ||
+    normalized === "em aprovação" ||
+    normalized === "em aprovacao" ||
+    normalized === "aguardando aprovação" ||
+    normalized === "aguardando aprovacao"
+  ) {
+    return "pending";
+  }
+
+  if (normalized === "bloqueado") {
+    return "blocked";
+  }
+
+  if (normalized === "recusado" || normalized === "rejeitado") {
+    return "rejected";
+  }
+
   return normalized || "pending";
 }
 
@@ -115,6 +137,7 @@ export function App() {
   const adminPanel = useAdminPanel(catalog, activeAuthUser, apiBaseUrl);
   const isAuthenticated = Boolean(activeAuthUser);
   const hasApprovedAccess = isAuthenticated && isApprovedAuthUser(activeAuthUser);
+  const canUseLibraryAccess = isAuthenticated && !isRejectedOrBlockedAuthUser(activeAuthUser);
   const isBooksRoute = location.pathname.startsWith("/livros");
   const isUsersRoute = location.pathname.startsWith("/usuarios");
   const isReportsRoute = location.pathname.startsWith("/relatorios");
@@ -184,12 +207,12 @@ export function App() {
       (user) => user.email && authUser?.email && user.email.toLowerCase() === authUser.email.toLowerCase()
     ) ||
     null;
-  const currentReaderId = hasApprovedAccess
+  const currentReaderId = canUseLibraryAccess
     ? selectedUserId || matchedSessionUser?.id || displayUsers[0]?.id || ""
     : "";
   const currentReader =
-    hasApprovedAccess ? displayUsers.find((user) => user.id === currentReaderId) ?? null : null;
-  const currentReaderLoans = hasApprovedAccess
+    canUseLibraryAccess ? displayUsers.find((user) => user.id === currentReaderId) ?? null : null;
+  const currentReaderLoans = canUseLibraryAccess
     ? libraryLoans.filter((loan) => loan.userId === currentReaderId && loan.status !== "RETURNED")
     : [];
 
@@ -205,14 +228,14 @@ export function App() {
     [libraryLoans]
   );
 
-  const borrowerId = hasApprovedAccess ? currentReaderId : "";
+  const borrowerId = canUseLibraryAccess ? currentReaderId : "";
   const visibleNotifications = useMemo(() => {
-    if (!activeAuthUser || !hasApprovedAccess) {
+    if (!activeAuthUser || !canUseLibraryAccess) {
       return [];
     }
 
     return displayNotifications.filter((notification) => notification.userId === activeAuthUser.id);
-  }, [activeAuthUser, displayNotifications, hasApprovedAccess]);
+  }, [activeAuthUser, canUseLibraryAccess, displayNotifications]);
   const unreadNotificationCount = visibleNotifications.filter(
     (notification) => !notification.readAt
   ).length;
@@ -476,11 +499,12 @@ export function App() {
       });
       setAuthUser(nextUser);
       setSelectedUserId("");
-      navigate("/cadastro/aguardando-aprovacao");
+      navigate("/livros");
 
       return {
         success: true,
-        message: "Seu cadastro ainda aguarda aprovacao de um administrador."
+        message:
+          "Seu cadastro ainda esta em aprovacao. Voce ja pode acessar livros e sua conta, mas emprestimos fisicos ficam bloqueados ate a validacao do administrador."
       };
     }
 
@@ -824,7 +848,7 @@ export function App() {
             path="/entrar"
             element=${isAuthenticated
               ? React.createElement(Navigate, {
-                  to: hasApprovedAccess ? "/livros" : "/cadastro/aguardando-aprovacao",
+                  to: "/livros",
                   replace: true
                 })
               : React.createElement(AuthPage, {
@@ -840,7 +864,7 @@ export function App() {
             path="/cadastrar"
             element=${isAuthenticated
               ? React.createElement(Navigate, {
-                  to: hasApprovedAccess ? "/livros" : "/cadastro/aguardando-aprovacao",
+                  to: "/livros",
                   replace: true
                 })
               : React.createElement(AuthPage, {
@@ -977,10 +1001,6 @@ export function App() {
 export default App;
 
 function renderReaderPage(authUser, page) {
-  if (isPendingAuthUser(authUser)) {
-    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
-  }
-
   if (isRejectedOrBlockedAuthUser(authUser)) {
     return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
@@ -993,8 +1013,8 @@ function renderProtectedPage(authUser, page) {
     return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
-  if (!isApprovedAuthUser(authUser)) {
-    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
+  if (isRejectedOrBlockedAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
   return page;
@@ -1005,11 +1025,15 @@ function renderAdminPage(authUser, adminPanel, page) {
     return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
-  if (!isApprovedAuthUser(authUser)) {
-    return React.createElement(Navigate, { to: "/cadastro/aguardando-aprovacao", replace: true });
+  if (isRejectedOrBlockedAuthUser(authUser)) {
+    return React.createElement(Navigate, { to: "/entrar", replace: true });
   }
 
-  if (authUser.role !== "admin" || adminPanel.currentUser?.role !== "admin" || !adminPanel.isAdmin) {
+  if (!isApprovedAuthUser(authUser) || authUser.role !== "admin") {
+    return React.createElement(Navigate, { to: "/livros", replace: true });
+  }
+
+  if (adminPanel.currentUser?.role !== "admin" || !adminPanel.isAdmin) {
     return React.createElement(AdminAccessDeniedPage);
   }
 

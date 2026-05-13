@@ -98,6 +98,16 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
           `
         : null}
 
+      ${currentUser?.accessStatus === "pending"
+        ? html`
+            <${FeedbackMessage}
+              tone="info"
+              title="Acesso em aprovacao"
+              message="Seu cadastro esta em aprovacao. Voce pode editar seus dados, acompanhar leituras e consultar livros digitais permitidos, mas emprestimos fisicos ainda aguardam liberacao."
+            />
+          `
+        : null}
+
       <${Section} title="" description="" className="account-hub-section">
         <div className="account-hub">
           <div className="account-hub-block">

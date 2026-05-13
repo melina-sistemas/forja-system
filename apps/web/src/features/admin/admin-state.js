@@ -81,10 +81,21 @@ function normalizeUserAccessStatus(status) {
   switch (normalized) {
     case "approved":
     case "active":
+    case "aprovado":
+    case "ativo":
       return "approved";
+    case "pendente":
+    case "em aprovacao":
+    case "em aprovação":
+    case "aguardando aprovacao":
+    case "aguardando aprovação":
+      return "pending";
     case "pending":
     case "rejected":
     case "blocked":
+    case "recusado":
+    case "rejeitado":
+    case "bloqueado":
       return normalized;
     default:
       return "pending";
@@ -671,6 +682,17 @@ function assignBookToUser(userId, bookId) {
         result = {
           success: false,
           message: "Livros premium exigem nivel ouro."
+        };
+        return current;
+      }
+
+      const userAccessStatus = normalizeUserAccessStatus(user.accessStatus ?? user.status);
+
+      if (book.type !== "digital" && userAccessStatus !== "approved") {
+        result = {
+          success: false,
+          message:
+            "Seu cadastro ainda esta em aprovacao. Depois da validacao do administrador voce podera solicitar emprestimos fisicos."
         };
         return current;
       }

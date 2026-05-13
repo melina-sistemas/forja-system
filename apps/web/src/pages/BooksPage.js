@@ -15,6 +15,7 @@ export function BooksPage({
   activeLoans,
   borrowerId,
   isAuthenticated,
+  currentReader,
   waitlists = [],
   notifications = [],
   loading,
@@ -22,8 +23,7 @@ export function BooksPage({
   selectedBookId,
   onSelectBook,
   loanActions,
-  currentReaderLoans,
-  currentReader
+  currentReaderLoans
 }) {
   const [bookTypeFilter, setBookTypeFilter] = useState("all");
 
@@ -67,6 +67,16 @@ export function BooksPage({
       description=${subtitle}
       stats=${stats}
     >
+      ${currentReader?.accessStatus === "pending"
+        ? html`
+            <${FeedbackMessage}
+              tone="info"
+              title="Cadastro em aprovacao"
+              message="Voce ja pode navegar pelos livros e pela sua conta, mas emprestimos fisicos continuam bloqueados ate a validacao do administrador."
+            />
+          `
+        : null}
+
       <div className="book-type-filter" role="tablist" aria-label="Filtrar livros por tipo">
         <button
           type="button"

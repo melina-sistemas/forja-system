@@ -6,7 +6,13 @@ const html = htm.bind(React.createElement);
 let pdfJsRuntimePromise = null;
 
 function resolveBookCover(book) {
-  return book.coverUrl || createPlaceholderCover(book);
+  const coverUrl = typeof book.coverUrl === "string" ? book.coverUrl.trim() : "";
+
+  if (coverUrl && isRenderableCoverUrl(coverUrl)) {
+    return coverUrl;
+  }
+
+  return createPlaceholderCover(book);
 }
 
 function handleBookCoverError(event, book) {
@@ -18,6 +24,23 @@ function handleBookCoverError(event, book) {
 
   image.dataset.fallbackApplied = "true";
   image.src = createPlaceholderCover(book);
+}
+
+function isRenderableCoverUrl(coverUrl) {
+  if (!coverUrl) {
+    return false;
+  }
+
+  return (
+    coverUrl.startsWith("data:image/") ||
+    coverUrl.startsWith("blob:") ||
+    coverUrl.startsWith("/") ||
+    coverUrl.startsWith("./") ||
+    coverUrl.startsWith("../") ||
+    coverUrl.startsWith("http://localhost") ||
+    coverUrl.startsWith("https://localhost") ||
+    coverUrl.startsWith("https://forja-system")
+  );
 }
 
 export function BookCatalog({
@@ -159,6 +182,8 @@ export function BookCatalog({
   const readerBook = cards.find((book) => book.id === readerBookId) ?? null;
   const canAccessPremiumBook =
     modalBook?.type === "digital" ? true : isGoldLevel(currentReader?.level);
+  const canRequestPhysicalLoan = currentReader?.accessStatus === "approved";
+  const isPendingReader = currentReader?.accessStatus === "pending";
 
   useEffect(() => {
     if (!readerBookId) {
@@ -684,12 +709,14 @@ export function BookCatalog({
                           : null}
                       </div>
                     `
-                  : book.isOutOfStock
+                : book.isOutOfStock
                   ? html`<span className="book-status out-of-stock">Sem estoque</span>`
                   : !book.isActive
                   ? html`<span className="book-status">Indisponivel agora</span>`
                   : !isAuthenticated
                   ? html`<span className="book-status">Entre para solicitar</span>`
+                  : book.type === "physical" && !canRequestPhysicalLoan
+                  ? html`<span className="book-status">Em aprovacao</span>`
                   : html`
                       <button
                         type="button"
@@ -837,6 +864,17 @@ export function BookCatalog({
                             ${modalBook.currentReaderWaitlist
                               ? html`<small>Voce esta na fila #${modalBook.currentReaderWaitlist.position}</small>`
                               : null}
+                          </div>
+                        `
+                      : modalBook.type === "physical" && !canRequestPhysicalLoan
+                      ? html`
+                          <div className="modal-borrow-panel muted">
+                            <strong>Cadastro em aprovacao</strong>
+                            <span>
+                              Seu cadastro ainda esta em aprovacao. Voce pode ver os livros e acessar
+                              leituras digitais permitidas, mas o emprestimo fisico so fica disponivel
+                              apos a validacao do administrador.
+                            </span>
                           </div>
                         `
                       : !isAuthenticated
