@@ -323,13 +323,9 @@ export function BookCatalog({
 
         const baseViewport = page.getViewport({ scale: 1 });
         const stageWidth = Math.max(760, stage.clientWidth - 12);
-        const stageHeight = Math.max(860, stage.clientHeight - 12);
         const widthScale = stageWidth / baseViewport.width;
-        const heightScale = stageHeight / baseViewport.height;
-        const fitScale = Math.min(widthScale, heightScale);
-        const densityScale = readerDensity === "wide" ? 1.22 : 1.08;
         const viewport = page.getViewport({
-          scale: Math.max(0.28, Math.min(2.05, fitScale * readerScale * densityScale))
+          scale: Math.max(0.28, Math.min(2.4, widthScale * readerScale))
         });
         const context = canvas.getContext("2d");
 
@@ -413,7 +409,7 @@ export function BookCatalog({
 
     setReaderTheme("paper");
     setReaderDensity("wide");
-    setReaderScale(1.22);
+    setReaderScale(1);
     setReaderError("");
     setReaderAnimating(false);
     setReaderBookId(book.id);
