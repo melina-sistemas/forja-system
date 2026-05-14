@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import htm from "htm";
 import { AdminPageLayout } from "../../components/AdminPageLayout.js";
 
@@ -104,13 +104,13 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         setDraftFilters((current) => ({ ...current, role: event.target.value }))}
                     >
                       <option value="all">Todos</option>
-                      <option value="user">Usuario</option>
+                      <option value="user">Usuário</option>
                       <option value="admin">Admin</option>
                     </select>
                   </label>
 
                   <label>
-                    <span>Nivel</span>
+                    <span>Nível</span>
                     <select
                       value=${draftFilters.level}
                       onChange=${(event) =>
@@ -172,25 +172,25 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
       </div>
 
       <button type="button" className="admin-primary" onClick=${() => setShowCreateModal(true)}>
-        + Novo usuario
+        + Novo usuário
       </button>
     </div>
   `;
 
   return html`
     <${AdminPageLayout}
-      title="Usuarios"
-      breadcrumb="Usuarios"
+      title="Usuários"
+      breadcrumb="Usuários"
       description="Gerencie o time, acompanhe a jornada de leitura e ajuste os dados de cada colaborador."
       actions=${actionsBar}
     >
       <article className="admin-card admin-approval-card">
         <div className="admin-card-header admin-card-header-block">
           <div>
-            <h3>Usuarios pendentes</h3>
+            <h3>Usuários pendentes</h3>
             <p>Revise os cadastros novos antes de liberar o acesso ao sistema.</p>
           </div>
-          <span className="admin-pill">${pendingUsers.length} pendencias</span>
+          <span className="admin-pill">${pendingUsers.length} pendências</span>
         </div>
 
         ${pendingUsers.length > 0
@@ -231,25 +231,25 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                 )}
               </div>
             `
-          : html`<p className="admin-helper">Nenhum usuario pendente no momento.</p>`}
+          : html`<p className="admin-helper">Nenhum usuário pendente no momento.</p>`}
       </article>
 
       <article className="admin-card admin-user-directory-card">
         <div className="admin-card-header admin-card-header-block">
           <div>
-            <h3>Usuarios do time</h3>
-            <p>Selecione um usuario da lista ou use o botao Editar para abrir o perfil completo.</p>
+            <h3>Usuários do time</h3>
+            <p>Selecione um usuário da lista ou use o botão Editar para abrir o perfil completo.</p>
           </div>
         </div>
 
         ${filteredUsers.length > 0
           ? html`
               <div className="admin-user-list-head">
-                <span>Usuario</span>
+                <span>Usuário</span>
                 <span>Perfil</span>
-                <span>Nivel</span>
+                <span>Nível</span>
                 <span>Status</span>
-                <span className="admin-user-actions-head">Acoes</span>
+                <span className="admin-user-actions-head">Ações</span>
               </div>
               <div className="admin-user-list admin-user-list-structured">
                 ${filteredUsers.map(
@@ -281,8 +281,8 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         <button
                           type="button"
                           className="admin-icon-button"
-                          title="Editar usuario"
-                          aria-label="Editar usuario"
+                          title="Editar usuário"
+                          aria-label="Editar usuário"
                           onClick=${() => setSelectedUserId(user.id)}
                         >
                           ${renderActionIcon("edit")}
@@ -290,8 +290,8 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         <button
                           type="button"
                           className=${`admin-icon-button ${user.accessStatus === "blocked" ? "active" : ""}`}
-                          title=${user.accessStatus === "blocked" ? "Desbloquear usuario" : "Bloquear usuario"}
-                          aria-label=${user.accessStatus === "blocked" ? "Desbloquear usuario" : "Bloquear usuario"}
+                          title=${user.accessStatus === "blocked" ? "Desbloquear usuário" : "Bloquear usuário"}
+                          aria-label=${user.accessStatus === "blocked" ? "Desbloquear usuário" : "Bloquear usuário"}
                           onClick=${() =>
                             setConfirmAction({
                               type: "block",
@@ -303,8 +303,8 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                         <button
                           type="button"
                           className="admin-icon-button admin-icon-button-danger"
-                          title="Excluir usuario"
-                          aria-label="Excluir usuario"
+                          title="Excluir usuário"
+                          aria-label="Excluir usuário"
                           onClick=${() =>
                             setConfirmAction({
                               type: "delete",
@@ -319,10 +319,10 @@ export function AdminUsersPage({ users, loans, books, returns = [], actions }) {
                 )}
               </div>
             `
-          : html`<p className="admin-helper">Nenhum usuario encontrado com os filtros atuais.</p>`}
+          : html`<p className="admin-helper">Nenhum usuário encontrado com os filtros atuais.</p>`}
 
         <footer className="admin-user-directory-footer">
-          <span>Total de usuarios</span>
+          <span>Total de usuários</span>
           <strong>${filteredUsers.length}</strong>
         </footer>
       </article>
@@ -406,7 +406,7 @@ function renderCreateUserModal({
         <button type="button" className="admin-modal-close" onClick=${onClose}>×</button>
         <div className="admin-modal-header">
           <div>
-            <h3>Novo usuario</h3>
+            <h3>Novo usuário</h3>
             <p>Cadastre um colaborador e defina o acesso inicial do perfil.</p>
           </div>
         </div>
@@ -459,13 +459,13 @@ function renderCreateUserModal({
                       value=${adminCreateForm.role}
                       onChange=${(event) => onChange((current) => ({ ...current, role: event.target.value }))}
                     >
-              <option value="user">Usuario</option>
+                    <option value="user">Usuário</option>
               <option value="admin">Admin</option>
                     </select>
                   </label>
 
           <label>
-            <span>Nivel</span>
+            <span>Nível</span>
             <select
               value=${adminCreateForm.level}
               onChange=${(event) => onChange((current) => ({ ...current, level: event.target.value }))}
@@ -478,7 +478,7 @@ function renderCreateUserModal({
 
           <div className="admin-modal-actions admin-form-span-2">
             <button type="button" className="admin-secondary" onClick=${onClose}>Cancelar</button>
-            <button type="submit" className="admin-primary">Salvar usuario</button>
+            <button type="submit" className="admin-primary">Salvar usuário</button>
           </div>
           ${adminCreateFeedback
             ? html`<p className="admin-helper admin-form-span-2">${adminCreateFeedback}</p>`
@@ -536,7 +536,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
         <div className="admin-modal-grid">
           <div className="admin-modal-panel">
             <div className="admin-card-header">
-              <h3>Dados do usuario</h3>
+              <h3>Dados do usuário</h3>
             </div>
 
             <form className="admin-form admin-form-grid">
@@ -593,13 +593,13 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                   value=${user.role}
                   onChange=${(event) => actions.updateUser(user.id, { role: event.target.value })}
                 >
-                  <option value="user">Usuario</option>
+                  <option value="user">Usuário</option>
                   <option value="admin">Admin</option>
                 </select>
               </label>
 
               <label>
-                <span>Nivel</span>
+                <span>Nível</span>
                 <select
                   value=${user.level}
                   onChange=${(event) => actions.updateUser(user.id, { level: event.target.value })}
@@ -690,7 +690,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                       setSelectedRecommendationId("");
                     }}
                   >
-                    Confirmar indicacao
+                    Confirmar indicação
                   </button>
                 </div>
 
@@ -713,8 +713,8 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                                   <button
                                     type="button"
                                     className="admin-icon-button admin-icon-button-danger"
-                                    title="Remover indicacao"
-                                    aria-label="Remover indicacao"
+                                    title="Remover indicação"
+                                    aria-label="Remover indicação"
                                     onClick=${() => {
                                       const nextIds = recommendedBookIds.filter((id) => id !== book.id);
                                       actions.updateUser(user.id, {
@@ -731,7 +731,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                           )}
                       </div>
                     `
-                  : html`<p className="admin-helper">Nenhum livro indicado para este usuario ainda.</p>`}
+                  : html`<p className="admin-helper">Nenhum livro indicado para este usuário ainda.</p>`}
                 </div>
               </div>
 
@@ -739,7 +739,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                 <div className="admin-panel-inline-head">
                   <div>
                     <h4>Adicionar livro em leitura</h4>
-                    <p>Use este controle para registrar manualmente um livro que o usuario esta lendo.</p>
+                    <p>Use este controle para registrar manualmente um livro que o usuário está lendo.</p>
                   </div>
                 </div>
 
@@ -779,7 +779,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                 </div>
 
                 ${borrowFeedback
-                  ? html`<p className=${`admin-helper ${borrowFeedback.includes("Nao") ? "error" : ""}`}>
+                    ? html`<p className=${`admin-helper ${borrowFeedback.includes("Não") ? "error" : ""}`}>
                       ${borrowFeedback}
                     </p>`
                   : null}
@@ -790,7 +790,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
           <div className="admin-modal-panel admin-history-panel">
             <div className="admin-card-header admin-history-panel-header">
               <div>
-                <h3>Historico e respostas</h3>
+                <h3>Histórico e respostas</h3>
                 <p>Veja as leituras realizadas e as respostas enviadas ao final de cada leitura.</p>
               </div>
             </div>
@@ -840,7 +840,7 @@ function UserProfileModal({ user, books, history, actions, onClose }) {
                     )}
                   </div>
                 `
-              : html`<p className="admin-helper">Nenhum historico encontrado para este usuario.</p>`}
+              : html`<p className="admin-helper">Nenhum histórico encontrado para este usuário.</p>`}
           </div>
         </div>
       </div>
@@ -852,16 +852,16 @@ function renderConfirmActionModal({ confirmAction, onClose, onConfirm }) {
   const isDelete = confirmAction.type === "delete";
   const isBlocked = confirmAction.user.accessStatus === "blocked";
   const title = isDelete
-    ? "Confirmar exclusao"
+    ? "Confirmar exclusão"
     : isBlocked
       ? "Confirmar desbloqueio"
       : "Confirmar bloqueio";
   const message = isDelete
-    ? `Deseja realmente excluir o usuario ${confirmAction.user.name}? Esta acao remove o cadastro da lista.`
+      ? `Deseja realmente excluir o usuário ${confirmAction.user.name}? Esta ação remove o cadastro da lista.`
     : isBlocked
-      ? `Deseja desbloquear o usuario ${confirmAction.user.name} para liberar o acesso ao sistema?`
-      : `Deseja bloquear o usuario ${confirmAction.user.name}? Ele nao conseguira acessar o sistema ate ser liberado novamente.`;
-  const confirmLabel = isDelete ? "Excluir usuario" : isBlocked ? "Desbloquear" : "Bloquear";
+      ? `Deseja desbloquear o usuário ${confirmAction.user.name} para liberar o acesso ao sistema?`
+      : `Deseja bloquear o usuário ${confirmAction.user.name}? Ele não conseguirá acessar o sistema até ser liberado novamente.`;
+  const confirmLabel = isDelete ? "Excluir usuário" : isBlocked ? "Desbloquear" : "Bloquear";
 
   return html`
     <div className="admin-modal-backdrop" onClick=${onClose}>
@@ -913,7 +913,7 @@ function buildUserHistory({ user, loans, books, returns }) {
 }
 
 function translateRole(role) {
-  return role === "admin" ? "Admin" : "Usuario";
+    return role === "admin" ? "Admin" : "Usuário";
 }
 
 function translateLevel(level) {
@@ -946,7 +946,7 @@ function translateStatus(status) {
 function translateLoanStatus(status) {
   switch (status) {
     case "PENDING_APPROVAL":
-      return "Em analise";
+      return "Em análise";
     case "READY_FOR_PICKUP":
       return "Pronto para retirada";
     case "BORROWED":
@@ -978,11 +978,11 @@ function getRecommendedBookStatus({ book, history }) {
   }
 
   if (matchingHistory?.status === "PENDING_APPROVAL") {
-    return { label: "Aguardando aprovacao", className: "pending" };
+    return { label: "Aguardando aprovação", className: "pending" };
   }
 
   if (book.type === "digital" || Number(book.availableQuantity ?? 0) > 0) {
-    return { label: "Disponivel", className: "active" };
+    return { label: "Disponível", className: "active" };
   }
 
   return { label: "Sem estoque", className: "blocked" };
@@ -1001,3 +1001,5 @@ function renderActionIcon(kind) {
     </svg>
   `;
 }
+
+

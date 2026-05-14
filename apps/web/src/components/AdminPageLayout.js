@@ -14,8 +14,8 @@ export function AdminPageLayout({
 }) {
   const location = useLocation();
   const sectionName = location.pathname.startsWith("/admin/settings")
-    ? "Configuracoes / Personalizacao"
-    : "Configuracoes";
+    ? "Configurações / Personalização"
+    : "Configurações";
 
   return html`
     <section className="admin-page-shell">

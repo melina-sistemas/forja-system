@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import htm from "htm";
 import { createPlaceholderCover } from "../../services/google-books.js";
 
@@ -144,7 +144,7 @@ export function BookCatalog({
         const canConfirmPickup = currentReaderLoan?.status === "READY_FOR_PICKUP";
         const isWaitingForBook = Boolean(currentReaderWaitlist);
         const requestLabel = canConfirmPickup
-          ? "Confirmar emprestimo"
+          ? "Confirmar empréstimo"
           : isOutOfStock && book.type === "physical"
           ? currentReaderWaitlist
             ? `Na fila #${currentReaderWaitlist.position || getWaitlistPosition(waitlists, book.id, borrowerId)}`
@@ -153,7 +153,7 @@ export function BookCatalog({
           ? "Acessar livro"
           : hasActiveBorrowedLoan
           ? "Reservar livro"
-          : "Solicitar emprestimo";
+          : "Solicitar empréstimo";
 
         return {
           ...book,
@@ -250,7 +250,7 @@ export function BookCatalog({
         setReaderError(
           error instanceof Error
             ? error.message
-            : "Nao foi possivel abrir este PDF para leitura."
+            : "Não foi possível abrir este PDF para leitura."
         );
       })
       .finally(() => {
@@ -330,7 +330,7 @@ export function BookCatalog({
         const context = canvas.getContext("2d");
 
         if (!context) {
-          setReaderError("Nao foi possivel preparar a area de leitura.");
+        setReaderError("Não foi possível preparar a área de leitura.");
           setReaderLoading(false);
           return;
         }
@@ -360,7 +360,7 @@ export function BookCatalog({
         setReaderError(
           error instanceof Error
             ? error.message
-            : "Nao foi possivel renderizar esta pagina."
+            : "Não foi possível renderizar esta página."
         );
       });
 
@@ -402,7 +402,7 @@ export function BookCatalog({
     if (!book?.digitalContentBase64) {
       setFlash({
         type: "error",
-        message: "Este livro digital ainda nao possui PDF anexado."
+        message: "Este livro digital ainda não possui PDF anexado."
       });
       return;
     }
@@ -496,7 +496,7 @@ export function BookCatalog({
     if (!borrowerId) {
       setFlash({
         type: "error",
-        message: "Nenhum usuario disponivel para emprestimo no momento."
+        message: "Nenhum usuário disponível para empréstimo no momento."
       });
       return;
     }
@@ -513,7 +513,7 @@ export function BookCatalog({
       if (!response?.success) {
         setFlash({
           type: "error",
-          message: response?.message ?? "Nao foi possivel solicitar o livro."
+          message: response?.message ?? "Não foi possível solicitar o livro."
         });
         return;
       }
@@ -555,7 +555,7 @@ export function BookCatalog({
     if (!targetLoan) {
       setFlash({
         type: "error",
-        message: "Nao encontramos uma reserva pronta para confirmacao."
+        message: "Não encontramos uma reserva pronta para confirmação."
       });
       return;
     }
@@ -569,7 +569,7 @@ export function BookCatalog({
       if (!response?.success) {
         setFlash({
           type: "error",
-          message: response?.message ?? "Nao foi possivel confirmar o emprestimo."
+          message: response?.message ?? "Não foi possível confirmar o empréstimo."
         });
         return;
       }
@@ -619,7 +619,7 @@ export function BookCatalog({
   if (cards.length === 0) {
     return html`
       <section className="catalog-state">
-        <p>Nenhum livro disponivel no momento.</p>
+        <p>Nenhum livro disponível no momento.</p>
       </section>
     `;
   }
@@ -708,11 +708,11 @@ export function BookCatalog({
                 : book.isOutOfStock
                   ? html`<span className="book-status out-of-stock">Sem estoque</span>`
                   : !book.isActive
-                  ? html`<span className="book-status">Indisponivel agora</span>`
+                  ? html`<span className="book-status">Indisponível agora</span>`
                   : !isAuthenticated
                   ? html`<span className="book-status">Entre para solicitar</span>`
                   : book.type === "physical" && !canRequestPhysicalLoan
-                  ? html`<span className="book-status">Em aprovacao</span>`
+                            ? html`<span className="book-status">Em aprovação</span>`
                   : html`
                       <button
                         type="button"
@@ -803,8 +803,8 @@ export function BookCatalog({
                               ${canAccessPremiumBook
                                 ? modalBook.type === "digital"
                                   ? "Livros digitais podem ser acessados diretamente dentro do sistema."
-                                  : "Seu nivel atual permite esta leitura."
-                                : "Este titulo exige nivel ouro para acesso."}
+                                  : "Seu nível atual permite esta leitura."
+                                : "Este título exige nível ouro para acesso."}
                             </span>
                           </div>
                         `
@@ -833,7 +833,7 @@ export function BookCatalog({
                                   >
                                     ${busyBookId === modalBook.id
                                       ? "Processando..."
-                                      : "Confirmar emprestimo"}
+                                      : "Confirmar empréstimo"}
                                   </button>
                                 `
                               : null}
@@ -856,46 +856,46 @@ export function BookCatalog({
                       ? html`
                           <div className="modal-borrow-panel muted">
                             <strong>Sem estoque</strong>
-                            <span>Aguarde a devolucao de um exemplar fisico.</span>
+                            <span>Aguarde a devolução de um exemplar físico.</span>
                             ${modalBook.currentReaderWaitlist
-                              ? html`<small>Voce esta na fila #${modalBook.currentReaderWaitlist.position}</small>`
+                              ? html`<small>Você está na fila #${modalBook.currentReaderWaitlist.position}</small>`
                               : null}
                           </div>
                         `
                       : modalBook.type === "physical" && !canRequestPhysicalLoan
                       ? html`
                           <div className="modal-borrow-panel muted">
-                            <strong>Cadastro em aprovacao</strong>
+                            <strong>Cadastro em aprovação</strong>
                             <span>
-                              Seu cadastro ainda esta em aprovacao. Voce pode ver os livros e acessar
-                              leituras digitais permitidas, mas o emprestimo fisico so fica disponivel
-                              apos a validacao do administrador.
+                              Seu cadastro ainda está em aprovação. Você pode ver os livros e acessar
+                              leituras digitais permitidas, mas o empréstimo físico só fica disponível
+                              após a validação do administrador.
                             </span>
                           </div>
                         `
                       : !isAuthenticated
                       ? html`
                           <div className="modal-borrow-panel muted">
-                            <strong>Login necessario</strong>
+                            <strong>Login necessário</strong>
                             <span>Entre no sistema para solicitar ou acessar este livro.</span>
                           </div>
                         `
                       : html`
                         <div className="modal-borrow-panel">
-                          <strong>
-                            ${modalBook.type === "digital"
-                              ? "Acesso imediato"
-                              : modalBook.hasActiveBorrowedLoan
+                            <strong>
+                              ${modalBook.type === "digital"
+                                ? "Acesso imediato"
+                                : modalBook.hasActiveBorrowedLoan
                               ? "Reserva aguardando retorno"
-                              : "Pronto para solicitacao"}
+                              : "Pronto para solicitação"}
                           </strong>
                             <span>
                               ${modalBook.type === "digital"
-                                ? "Leia este titulo diretamente no sistema."
+                                ? "Leia este título diretamente no sistema."
                                 : "Veja os detalhes e solicite este livro quando estiver pronto."}
                             </span>
                             ${modalBook.hasActiveBorrowedLoan && modalBook.type === "physical"
-                              ? html`<small>Voce ja possui leitura ativa. Depois de devolver, confirme este livro.</small>`
+                              ? html`<small>Você já possui leitura ativa. Depois de devolver, confirme este livro.</small>`
                               : null}
                             <button
                               type="button"
@@ -1049,8 +1049,8 @@ export function BookCatalog({
                                 className="reader-page-control reader-page-icon-button"
                                 disabled=${readerPageCount === 0 || readerPage >= readerPageCount || readerLoading}
                                 onClick=${() => handleReaderJump(1)}
-                                aria-label="Proxima pagina"
-                                title="Proxima pagina"
+                                aria-label="Próxima página"
+                                title="Próxima página"
                               >
                                 ${readerControlIcon("next")}
                               </button>
@@ -1065,7 +1065,7 @@ export function BookCatalog({
                                 ? html`
                                     <div className="reader-page-loading">
                                       <strong>Carregando leitura...</strong>
-                                      <p>Estamos preparando a pagina para voce.</p>
+                                      <p>Estamos preparando a página para você.</p>
                                     </div>
                                   `
                                 : null}
@@ -1073,7 +1073,7 @@ export function BookCatalog({
                               ${readerError
                                 ? html`
                                     <div className="reader-empty-state">
-                                      <strong>Leitura indisponivel</strong>
+                                      <strong>Leitura indisponível</strong>
                                       <p>${readerError}</p>
                                     </div>
                                   `
@@ -1095,9 +1095,9 @@ export function BookCatalog({
                       `
                     : html`
                           <div className="reader-empty-state">
-                            <strong>PDF nao anexado</strong>
+            <strong>PDF não anexado</strong>
                             <p>
-                              Este livro ainda nao possui PDF disponivel para leitura no sistema.
+                              Este livro ainda não possui PDF disponível para leitura no sistema.
                             </p>
                           </div>
                         `}
@@ -1145,7 +1145,7 @@ function writeStoredReaderPage(bookId, page) {
 
 async function loadPdfJsRuntime() {
   if (!globalThis.window) {
-    throw new Error("Leitura digital disponivel apenas no navegador.");
+    throw new Error("Leitura digital disponível apenas no navegador.");
   }
 
   if (!pdfJsRuntimePromise) {
@@ -1171,7 +1171,7 @@ async function loadPdfJsRuntime() {
 function translateLoanStatus(status) {
   switch (status) {
     case "PENDING_APPROVAL":
-      return "Aguardando aprovacao";
+      return "Aguardando aprovação";
     case "READY_FOR_PICKUP":
       return "Pronto para retirada";
     case "BORROWED":
@@ -1179,7 +1179,7 @@ function translateLoanStatus(status) {
     case "RETURNED":
       return "Devolvido";
     case "REJECTED":
-      return "Solicitacao negada";
+      return "Solicitação negada";
     default:
       return "Em processamento";
   }
@@ -1188,15 +1188,15 @@ function translateLoanStatus(status) {
 function buildLoanStatusMessage(loan, book) {
   switch (loan.status) {
     case "PENDING_APPROVAL":
-      return "Solicitacao enviada ao admin.";
+      return "Solicitação enviada ao admin.";
     case "READY_FOR_PICKUP":
-      return `Reserve ate ${formatLoanDate(loan.readyUntil || loan.dueAt)} e retire em ${loan.location || "local a definir"} com ${loan.responsible || "responsavel a definir"}.`;
+      return `Reserve até ${formatLoanDate(loan.readyUntil || loan.dueAt)} e retire em ${loan.location || "local a definir"} com ${loan.responsible || "responsável a definir"}.`;
     case "BORROWED":
       return book.type === "digital"
-        ? `Acesso liberado ate ${formatLoanDate(loan.dueAt)}.`
-        : `Com voce ate ${formatLoanDate(loan.dueAt)}.`;
+        ? `Acesso liberado até ${formatLoanDate(loan.dueAt)}.`
+        : `Com você até ${formatLoanDate(loan.dueAt)}.`;
     case "REJECTED":
-      return "Solicitacao negada. Fale com o responsavel pelas liberacoes.";
+      return "Solicitação negada. Fale com o responsável pelas liberações.";
     default:
       return "Status atualizado.";
   }
@@ -1366,3 +1366,5 @@ function decodeBase64Pdf(base64) {
 
   return bytes;
 }
+
+

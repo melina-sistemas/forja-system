@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import htm from "htm";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar.js";
@@ -479,7 +479,7 @@ export function App() {
     if (!matchedUser) {
       return {
         success: false,
-        message: "Nao encontramos um cadastro com este e-mail."
+        message: "Não encontramos um cadastro com este e-mail."
       };
     }
 
@@ -488,7 +488,7 @@ export function App() {
     if (String(matchedUser.password || "") !== String(credentials?.password || "")) {
       return {
         success: false,
-        message: "E-mail ou senha invalidos."
+        message: "E-mail ou senha inválidos."
       };
     }
 
@@ -504,7 +504,7 @@ export function App() {
       return {
         success: true,
         message:
-          "Seu cadastro ainda esta em aprovacao. Voce ja pode acessar livros e sua conta, mas emprestimos fisicos ficam bloqueados ate a validacao do administrador."
+          "Seu cadastro ainda está em aprovação. Você já pode acessar livros e sua conta, mas empréstimos físicos ficam bloqueados até a validação do administrador."
       };
     }
 
@@ -513,7 +513,7 @@ export function App() {
         success: false,
         message:
           matchedStatus === "blocked"
-            ? "Seu acesso esta bloqueado no momento. Fale com um administrador da FORJA."
+            ? "Seu acesso está bloqueado no momento. Fale com um administrador da FORJA."
             : "Seu cadastro foi recusado. Fale com um administrador da FORJA."
       };
     }
@@ -625,7 +625,7 @@ export function App() {
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Todos os livros",
-              subtitle: "Explore todo o catalogo da biblioteca e abra qualquer titulo para emprestimo.",
+              subtitle: "Explore todo o catálogo da biblioteca e abra qualquer título para empréstimo.",
               books: filteredLibraryBooks
             }))}
           />
@@ -636,7 +636,7 @@ export function App() {
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Todos os livros",
-              subtitle: "Explore todo o catalogo da biblioteca e abra qualquer titulo para emprestimo.",
+              subtitle: "Explore todo o catálogo da biblioteca e abra qualquer título para empréstimo.",
               books: filteredLibraryBooks
             }))}
           />
@@ -648,7 +648,7 @@ export function App() {
               ...commonBookPageProps,
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
-              title: "Livros disponiveis",
+              title: "Livros disponíveis",
               subtitle: "Veja apenas os livros que podem ser retirados agora.",
               books: filterBooks(libraryBooks, activeLoans, "available")
             })
@@ -663,7 +663,7 @@ export function App() {
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Livros emprestados",
-              subtitle: "Acompanhe os titulos em circulacao e o prazo previsto de retorno.",
+              subtitle: "Acompanhe os títulos em circulação e o prazo previsto de retorno.",
               books: filterBooks(libraryBooks, activeLoans, "borrowed")
             })
           )}
@@ -677,7 +677,7 @@ export function App() {
               waitlists: displayWaitlists,
               notifications: visibleNotifications,
               title: "Livros premium",
-              subtitle: "Consulte os titulos premium disponiveis para leitores com nivel ouro.",
+              subtitle: "Consulte os títulos premium disponíveis para leitores com nível ouro.",
               books: filterBooks(libraryBooks, activeLoans, "premium")
             })
           )}
@@ -1048,9 +1048,9 @@ function PendingApprovalPage({ onLogout }) {
           <div className="auth-card auth-card-minimal auth-pending-card">
             <div className="auth-confirmation">
               <span className="auth-confirmation-icon auth-confirmation-icon-warning">!</span>
-              <h1>Seu cadastro esta aguardando aprovacao do administrador.</h1>
+              <h1>Seu cadastro está aguardando aprovação do administrador.</h1>
               <p>
-                Assim que um admin liberar o acesso, voce podera entrar normalmente e usar a
+                Assim que um admin liberar o acesso, você poderá entrar normalmente e usar a
                 biblioteca interna.
               </p>
               <button type="button" className="auth-submit" onClick=${onLogout}>
@@ -1182,30 +1182,30 @@ function buildLoanMergeKey(loan) {
 
 function getSearchPlaceholder(pathname) {
   if (pathname.startsWith("/admin/books")) {
-    return "Buscar livros por titulo, autor ou categoria";
+    return "Buscar livros por título, autor ou categoria";
   }
 
   if (pathname.startsWith("/livros")) {
-    return "Buscar livros por titulo, autor ou categoria";
+    return "Buscar livros por título, autor ou categoria";
   }
 
   if (pathname.startsWith("/usuarios")) {
-    return "Buscar usuarios por nome, e-mail ou setor";
+    return "Buscar usuários por nome, e-mail ou setor";
   }
 
   if (pathname.startsWith("/desempenho")) {
-    return "Buscar metricas, niveis ou leitores";
+    return "Buscar métricas, níveis ou leitores";
   }
 
   if (pathname.startsWith("/relatorios")) {
-    return "Buscar relatorios e indicadores";
+    return "Buscar relatórios e indicadores";
   }
 
   if (pathname.startsWith("/admin")) {
     return "Buscar dados administrativos";
   }
 
-  return "Buscar livros, usuarios ou relatorios";
+  return "Buscar livros, usuários ou relatórios";
 }
 
 function getSearchEmptyText(pathname) {
@@ -1218,11 +1218,11 @@ function getSearchEmptyText(pathname) {
   }
 
   if (pathname.startsWith("/usuarios")) {
-    return "Nenhum usuario parecido encontrado.";
+    return "Nenhum usuário parecido encontrado.";
   }
 
   if (pathname.startsWith("/relatorios")) {
-    return "Nenhum dado de relatorio parecido encontrado.";
+    return "Nenhum dado de relatório parecido encontrado.";
   }
 
   return "Nenhum resultado encontrado.";
@@ -1387,7 +1387,7 @@ function buildReportSearchSuggestions(data, query) {
 }
 
 function booksafeTitle(title) {
-  return title || "Livro sem titulo";
+  return title || "Livro sem título";
 }
 
 function getBookSearchScore(book, normalizedQuery) {
@@ -1501,3 +1501,5 @@ function filterBooks(books, activeLoans, filter) {
       return books;
   }
 }
+
+

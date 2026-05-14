@@ -80,26 +80,26 @@ export function ReportsPage({
 
   return html`
     <${PageLayout}
-      eyebrow="Relatorios"
+      eyebrow="Relatórios"
       title=${copy.title}
       description=${copy.subtitle}
       stats=${[
-        { label: "Usuarios analisados", value: filteredUsers.length },
+        { label: "Usuários analisados", value: filteredUsers.length },
         { label: "Livros no acervo", value: filteredBooks.length },
-        { label: "Qualidade media", value: averageQuality === "-" ? "-" : `${averageQuality}/10` }
+        { label: "Qualidade média", value: averageQuality === "-" ? "-" : `${averageQuality}/10` }
       ]}
     >
       ${filteredUsers.length === 0 && filteredBooks.length === 0
         ? html`
             <${EmptyState}
-              title="Nenhum dado para relatorio"
-              description="Nao encontramos dados dentro do periodo informado."
+              title="Nenhum dado para relatório"
+              description="Não encontramos dados dentro do período informado."
             />
           `
         : html`
             <${Section}
-              title=${view === "quality" ? "Qualidade das respostas" : "Painel analitico"}
-              description="Indicadores organizados para leitura rapida, com foco em tomada de decisao."
+              title=${view === "quality" ? "Qualidade das respostas" : "Painel analítico"}
+              description="Indicadores organizados para leitura rápida, com foco em tomada de decisão."
             >
               <form
                 className="report-period-filter"
@@ -109,7 +109,7 @@ export function ReportsPage({
                 }}
               >
                 <div className="report-period-filter-copy">
-                  <strong>Periodo do relatorio</strong>
+                  <strong>Período do relatório</strong>
                   <span>Escolha a data inicial e final para atualizar os dados abaixo.</span>
                 </div>
 
@@ -186,12 +186,12 @@ function getPageCopy(view) {
     case "quality":
       return {
         title: "Qualidade das respostas",
-        subtitle: "Acompanhe a profundidade das devolucoes e os aprendizados registrados."
+        subtitle: "Acompanhe a profundidade das devoluções e os aprendizados registrados."
       };
     default:
       return {
-        title: "Dashboard de relatorios",
-        subtitle: "Veja usuarios, livros e qualidade das respostas em um painel unico."
+        title: "Dashboard de relatórios",
+        subtitle: "Veja usuários, livros e qualidade das respostas em um painel único."
       };
   }
 }

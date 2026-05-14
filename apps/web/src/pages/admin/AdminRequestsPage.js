@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import htm from "htm";
 import { AdminPageLayout } from "../../components/AdminPageLayout.js";
 
@@ -36,7 +36,7 @@ export function AdminRequestsPage({ loans, books, users, actions }) {
 
   function handleReject(loanId) {
     const confirmed = globalThis.confirm(
-      "Deseja reprovar esta solicitacao? O usuario sera notificado."
+      "Deseja reprovar esta solicitação? O usuário será notificado."
     );
 
     if (!confirmed) {
@@ -49,22 +49,22 @@ export function AdminRequestsPage({ loans, books, users, actions }) {
 
   return html`
     <${AdminPageLayout}
-      title="Solicitacoes pendentes"
-      breadcrumb="Solicitacoes"
-      description="Veja pedidos em analise e o historico dos livros ja liberados para leitura."
+      title="Solicitações pendentes"
+      breadcrumb="Solicitações"
+      description="Veja pedidos em análise e o histórico dos livros já liberados para leitura."
     >
       ${feedback ? html`<article className="admin-card admin-feedback">${feedback}</article>` : null}
 
       <article className="admin-card admin-table-card">
         <div className="admin-card-header">
-          <h3>Fila de aprovacao</h3>
-          <span className="admin-pill">${pendingRequests.length} pendencias</span>
+          <h3>Fila de aprovação</h3>
+          <span className="admin-pill">${pendingRequests.length} pendências</span>
         </div>
 
         ${pendingRequests.length === 0
           ? html`
               <div className="admin-empty">
-                <strong>Nenhuma solicitacao aguardando aprovacao.</strong>
+                <strong>Nenhuma solicitação aguardando aprovação.</strong>
               </div>
             `
           : html`
@@ -72,13 +72,13 @@ export function AdminRequestsPage({ loans, books, users, actions }) {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Usuario</th>
+                      <th>Usuário</th>
                       <th>Livro</th>
                       <th>Solicitado em</th>
-                      <th>Responsavel</th>
+                      <th>Responsável</th>
                       <th>Local</th>
                       <th>Prazo</th>
-                      <th>Acoes</th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -161,8 +161,8 @@ export function AdminRequestsPage({ loans, books, users, actions }) {
       <article className="admin-card admin-table-card">
         <div className="admin-card-header">
           <div>
-            <h3>Emprestimos liberados</h3>
-            <p className="admin-helper">Livros ja emprestados com prazo, responsavel e tempo restante.</p>
+                  <h3>Empréstimos liberados</h3>
+            <p className="admin-helper">Livros já emprestados com prazo, responsável e tempo restante.</p>
           </div>
           <span className="admin-pill">${activeLoans.length} itens</span>
         </div>
@@ -178,7 +178,7 @@ export function AdminRequestsPage({ loans, books, users, actions }) {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Usuario</th>
+                      <th>ssuario</th>
                       <th>Livro</th>
                       <th>Liberado em</th>
                       <th>Liberado por</th>
@@ -256,3 +256,5 @@ function formatRemainingTime(dueAt, now) {
 
   return `Atrasado ha ${Math.abs(diffDays)} dias`;
 }
+
+

@@ -7,8 +7,8 @@ export function UserDirectory({ users, selectedUserId, onSelectUser }) {
   if (users.length === 0) {
     return html`
       <section className="info-card">
-        <h2>Usuarios</h2>
-        <p className="panel-text">Nenhum usuario encontrado.</p>
+        <h2>Usuários</h2>
+        <p className="panel-text">Nenhum usuário encontrado.</p>
       </section>
     `;
   }
@@ -16,9 +16,9 @@ export function UserDirectory({ users, selectedUserId, onSelectUser }) {
   return html`
     <section className="panel-block">
       <div className="panel-header">
-        <h2>Usuarios</h2>
+        <h2>Usuários</h2>
         <p className="panel-text">
-          Clique em um usuario para abrir o perfil e usar esse leitor nos proximos emprestimos.
+          Clique em um usuário para abrir o perfil e usar este leitor nos próximos empréstimos.
         </p>
       </div>
 

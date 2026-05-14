@@ -111,16 +111,16 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
             <div className="reports-grid">
               <article className="card">
                 <div className="card-top">
-                  <h3>Usuarios</h3>
-                  <p>Quantidade de livros lidos, tempo medio, pontuacao e nivel.</p>
+                  <h3>Usuários</h3>
+                  <p>Quantidade de livros lidos, tempo médio, pontuação e nível.</p>
                 </div>
                 <div className="report-table">
                   <div className="report-row report-head">
-                    <span>Usuario</span>
+                    <span>Usuário</span>
                     <span>Lidos</span>
-                    <span>Tempo medio</span>
+                    <span>Tempo médio</span>
                     <span>Pontos</span>
-                    <span>Nivel</span>
+                    <span>Nível</span>
                   </div>
                   ${paginatedUserRows.map(
                     (row) => html`
@@ -136,7 +136,7 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
                 </div>
                 <div className="ranking-pagination report-pagination">
                   <span className="ranking-page-indicator">
-                    Pagina ${userPage} de ${userTotalPages}
+                    Página ${userPage} de ${userTotalPages}
                   </span>
                   <div className="ranking-pagination-actions">
                     <button
@@ -153,7 +153,7 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
                       disabled=${userPage === userTotalPages}
                       onClick=${() => setUserPage((current) => Math.min(userTotalPages, current + 1))}
                     >
-                      Proxima
+                      Próxima
                     </button>
                   </div>
                 </div>
@@ -162,14 +162,14 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
               <article className="card card-accent">
                 <div className="card-top">
                   <h3>Livros</h3>
-                  <p>Emprestimos, nota media de resposta e tempo medio de leitura.</p>
+                  <p>Empréstimos, nota média de resposta e tempo médio de leitura.</p>
                 </div>
                 <div className="report-table">
                   <div className="report-row report-head">
                     <span>Livro</span>
-                    <span>Emprestimos</span>
-                    <span>Nota media</span>
-                    <span>Tempo medio</span>
+                    <span>Empréstimos</span>
+                    <span>Nota média</span>
+                    <span>Tempo médio</span>
                   </div>
                   ${paginatedBookRows.map(
                     (row) => html`
@@ -184,7 +184,7 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
                 </div>
                 <div className="ranking-pagination report-pagination">
                   <span className="ranking-page-indicator">
-                    Pagina ${bookPage} de ${bookTotalPages}
+                    Página ${bookPage} de ${bookTotalPages}
                   </span>
                   <div className="ranking-pagination-actions">
                     <button
@@ -201,7 +201,7 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
                       disabled=${bookPage === bookTotalPages}
                       onClick=${() => setBookPage((current) => Math.min(bookTotalPages, current + 1))}
                     >
-                      Proxima
+                      Próxima
                     </button>
                   </div>
                 </div>
@@ -214,7 +214,7 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
         <div className="card-top">
           <h3>Qualidade das respostas</h3>
           <p>
-            A pontuacao de qualidade vai de 0 a 10 e considera preenchimento
+            A pontuação de qualidade vai de 0 a 10 e considera preenchimento
             completo e profundidade simples do texto.
           </p>
         </div>
@@ -235,23 +235,23 @@ export function ReportsDashboard({ users, books, loans, returns, focus = "dashbo
                     </div>
 
                     <div className="answer-block">
-                      <span className="metric-label">Learning</span>
+                      <span className="metric-label">Aprendizado</span>
                       <p>${row.answers.learning}</p>
                     </div>
 
                     <div className="answer-block">
-                      <span className="metric-label">Application</span>
+                      <span className="metric-label">Aplicação</span>
                       <p>${row.answers.application}</p>
                     </div>
 
                     <div className="answer-block">
-                      <span className="metric-label">Example</span>
+                      <span className="metric-label">Exemplo</span>
                       <p>${row.answers.example}</p>
                     </div>
                   </article>
                 `
               )
-            : html`<p className="helper-text">Nenhuma devolucao registrada ainda.</p>`}
+            : html`<p className="helper-text">Nenhuma devolução registrada ainda.</p>`}
         </div>
       </article>
     </section>

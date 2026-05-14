@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import htm from "htm";
 import { AdminPageLayout } from "../../components/AdminPageLayout.js";
 
@@ -79,8 +79,8 @@ export function AdminLoansPage({ loans, books, users, actions }) {
 
         setFeedback(
           approved > 0
-            ? `${approved} solicitacao(oes) aprovada(s).`
-            : "Nenhuma solicitacao pendente foi aprovada."
+            ? `${approved} solicitação(ões) aprovada(s).`
+            : "Nenhuma solicitação pendente foi aprovada."
         );
       }}
     >
@@ -118,12 +118,12 @@ export function AdminLoansPage({ loans, books, users, actions }) {
     >
       <div className="admin-filters-main admin-filters-main-compact">
         <label className="admin-filter-search admin-filter-search-large">
-          <span className="sr-only">Buscar solicitacao</span>
+          <span className="sr-only">Buscar solicitação</span>
           <input
             value=${draftFilters.search}
             onInput=${(event) =>
               setDraftFilters((current) => ({ ...current, search: event.target.value }))}
-            placeholder="Buscar por usuario ou livro"
+          placeholder="Buscar por usuário ou livro"
           />
         </label>
 
@@ -222,9 +222,9 @@ export function AdminLoansPage({ loans, books, users, actions }) {
 
   return html`
     <${AdminPageLayout}
-      title="Solicitacoes"
-      breadcrumb="Solicitacoes"
-      description="Controle solicitacoes, aprovacoes, retirada e devolucao dos livros."
+      title="Solicitações"
+      breadcrumb="Solicitações"
+      description="Controle solicitações, aprovações, retirada e devolução dos livros."
       actions=${actionsBar}
       filters=${filters}
     >
@@ -232,7 +232,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
         <article className="admin-summary-card">
           <span>Pendentes</span>
           <strong>${summary.pending}</strong>
-          <small>Solicitacoes aguardando aprovacao.</small>
+          <small>Solicitações aguardando aprovação.</small>
         </article>
         <article className="admin-summary-card">
           <span>Prontos para retirada</span>
@@ -256,12 +256,12 @@ export function AdminLoansPage({ loans, books, users, actions }) {
       <div className="admin-grid admin-grid-wide">
         <article className="admin-card">
           <div className="admin-card-header">
-            <h3>Nova solicitacao</h3>
+            <h3>Nova solicitação</h3>
           </div>
 
           <form className="admin-form admin-form-grid" onSubmit=${handleRequestSubmit}>
             <label>
-              <span>Usuario</span>
+              <span>Usuário</span>
               <select
                 value=${requestForm.userId}
                 onChange=${(event) =>
@@ -285,7 +285,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
                 ${books.map(
                   (book) => html`
                     <option key=${book.id} value=${book.id}>
-                      ${book.title} (${book.type === "digital" ? "digital" : "fisico"})
+                      ${book.title} (${book.type === "digital" ? "digital" : "físico"})
                     </option>
                   `
                 )}
@@ -293,7 +293,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
             </label>
 
             <label className="admin-form-span-2">
-              <span>Observacoes</span>
+              <span>Observações</span>
               <textarea
                 rows="3"
                 value=${requestForm.notes}
@@ -303,7 +303,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
             </label>
 
             <div className="admin-actions admin-form-span-2">
-              <button type="submit" className="admin-primary">Solicitar emprestimo</button>
+              <button type="submit" className="admin-primary">Solicitar empréstimo</button>
             </div>
           </form>
         </article>
@@ -314,7 +314,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
           </div>
           <div className="admin-simple-list">
             <li>
-              <strong>Fila de aprovacao</strong>
+      <strong>Fila de aprovação</strong>
               <span>${summary.pending} aguardando admin</span>
             </li>
             <li>
@@ -323,7 +323,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
             </li>
             <li>
               <strong>Leituras ativas</strong>
-              <span>${summary.borrowed} com os usuarios</span>
+              <span>${summary.borrowed} com os usuários</span>
             </li>
           </div>
         </article>
@@ -338,13 +338,13 @@ export function AdminLoansPage({ loans, books, users, actions }) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Usuario</th>
+                <th>Usuário</th>
                 <th>Livro</th>
                 <th>Status</th>
-                <th>Responsavel</th>
+                <th>Responsável</th>
                 <th>Local</th>
                 <th>Prazo</th>
-                <th>Acoes</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -446,7 +446,7 @@ export function AdminLoansPage({ loans, books, users, actions }) {
                               onClick=${() =>
                                 setFeedback(actions.markReturned(loan.id).message)}
                             >
-                              Registrar devolucao
+                            Registrar devolução
                             </button>
                           `
                         : null}
@@ -471,3 +471,5 @@ function updateApprovalData(setter, loanId, field, value) {
     }
   }));
 }
+
+

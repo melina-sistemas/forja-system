@@ -1,4 +1,4 @@
-import { createLoanApiClient } from "../../services/loan-api.js";
+﻿import { createLoanApiClient } from "../../services/loan-api.js";
 import { ResultPanel } from "../../components/ResultPanel.js";
 import { calculateAnswerQuality } from "../reports/answer-quality.js";
 
@@ -110,17 +110,17 @@ export function ReturnForm({
   return html`
     <section className="card card-accent">
       <div className="card-top">
-        <p className="section-tag">Tela de devolucao</p>
+        <p className="section-tag">Tela de devolução</p>
         <h2>Devolver livro</h2>
         <p>
-          Agora a tela lista apenas os emprestimos ativos. Voce escolhe um item
-          da lista e o sistema usa o ID do emprestimo internamente.
+          Agora a tela lista apenas os empréstimos ativos. Você escolhe um item
+          da lista e o sistema usa o ID do empréstimo internamente.
         </p>
       </div>
 
       <form className="form-stack" onSubmit=${handleSubmit}>
         <label>
-          <span>Emprestimo ativo</span>
+          <span>Empréstimo ativo</span>
           <select
             value=${form.loanId}
             onChange=${(event) =>
@@ -128,7 +128,7 @@ export function ReturnForm({
             disabled=${loadingCatalog || loanOptions.length === 0 || loading}
           >
             ${loanOptions.length === 0
-              ? html`<option value="">Nenhum emprestimo ativo</option>`
+              ? html`<option value="">Nenhum empréstimo ativo</option>`
               : loanOptions.map(
                   (loan) => html`
                     <option key=${loan.id} value=${loan.id}>
@@ -142,16 +142,16 @@ export function ReturnForm({
         ${form.loanId
           ? html`
               <p className="helper-text">
-                Prazo deste emprestimo:
+                Prazo deste empréstimo:
                 ${selectedLoan
                   ? new Date(selectedLoan.dueAt).toLocaleString("pt-BR")
-                  : "nao encontrado"}
+                  : "não encontrado"}
               </p>
             `
-          : html`<p className="helper-text">Crie um emprestimo para liberar a devolucao nesta tela.</p>`}
+          : html`<p className="helper-text">Crie um empréstimo para liberar a devolução nesta tela.</p>`}
 
         <label>
-          <span>learning</span>
+          <span>Aprendizado</span>
           <textarea
             rows="3"
             value=${form.learning}
@@ -162,31 +162,31 @@ export function ReturnForm({
         </label>
 
         <label>
-          <span>application</span>
+          <span>Aplicação</span>
           <textarea
             rows="3"
             value=${form.application}
             onChange=${(event) =>
               setForm((current) => ({ ...current, application: event.target.value }))}
-            placeholder="Como isso sera aplicado no trabalho?"
+            placeholder="Como isso será aplicado no trabalho?"
           ></textarea>
         </label>
 
         <label>
-          <span>example</span>
+          <span>Exemplo</span>
           <textarea
             rows="3"
             value=${form.example}
             onChange=${(event) =>
               setForm((current) => ({ ...current, example: event.target.value }))}
-            placeholder="Digite um exemplo pratico."
+            placeholder="Digite um exemplo prático."
           ></textarea>
         </label>
 
         <section className="quality-preview">
           <div className="quality-preview-header">
             <div>
-              <span className="metric-label">Preview de qualidade</span>
+              <span className="metric-label">Prévia de qualidade</span>
               <strong>Estimativa ${qualityPreview.score}/10</strong>
             </div>
             <span className=${`quality-pill ${qualityPreview.label.toLowerCase()}`}>
@@ -214,7 +214,7 @@ export function ReturnForm({
       ${result
         ? html`
             <${ResultPanel}
-              title="Resultado da devolucao"
+              title="Resultado da devolução"
               status="success"
               raw=${result}
             >
@@ -233,10 +233,10 @@ export function ReturnForm({
                 </div>
                 <div>
                   <span className="metric-label">No prazo</span>
-                  <strong>${result.data.scoreBreakdown.isLate ? "Nao" : "Sim"}</strong>
+                  <strong>${result.data.scoreBreakdown.isLate ? "Não" : "Sim"}</strong>
                 </div>
                 <div>
-                  <span className="metric-label">Usuario</span>
+                  <span className="metric-label">Usuário</span>
                   <strong>${result.data.user.name}</strong>
                 </div>
                 <div>
@@ -251,7 +251,7 @@ export function ReturnForm({
       ${error
         ? html`
             <${ResultPanel}
-              title="Erro na devolucao"
+              title="Erro na devolução"
               status="error"
               raw=${error}
             >
@@ -277,3 +277,5 @@ export function ReturnForm({
     </section>
   `;
 }
+
+

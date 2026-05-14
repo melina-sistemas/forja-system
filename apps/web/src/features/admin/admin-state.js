@@ -296,7 +296,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
   function submitRegistrationRequest(input) {
     let result = {
       success: false,
-      message: "Nao foi possivel enviar sua solicitacao."
+      message: "Não foi possível enviar sua solicitação."
     };
 
     setState((current) => {
@@ -333,7 +333,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
 
       result = {
         success: true,
-        message: "Solicitacao enviada com sucesso."
+        message: "Solicitação enviada com sucesso."
       };
 
       return stabilizeAdminState({
@@ -348,7 +348,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
   function createManagedUser(input) {
     let result = {
       success: false,
-      message: "Nao foi possivel cadastrar o usuario."
+      message: "Não foi possível cadastrar o usuário."
     };
 
     setState((current) => {
@@ -383,7 +383,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
 
       result = {
         success: true,
-        message: "Usuario criado com sucesso. A senha inicial e o CPF."
+        message: "Usuário criado com sucesso. A senha inicial é o CPF."
       };
 
       return stabilizeAdminState({
@@ -458,7 +458,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
   function changePassword(userId, newPassword) {
     let result = {
       success: false,
-      message: "Nao foi possivel atualizar a senha."
+      message: "Não foi possível atualizar a senha."
     };
 
     setState((current) =>
@@ -512,7 +512,7 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
 function assignBookToUser(userId, bookId) {
     let result = {
       success: false,
-      message: "Nao foi possivel adicionar o livro ao usuario."
+      message: "Não foi possível adicionar o livro ao usuário."
     };
 
     setState((current) => {
@@ -522,7 +522,7 @@ function assignBookToUser(userId, bookId) {
       if (!user || !book) {
         result = {
           success: false,
-          message: "Usuario ou livro nao encontrado."
+          message: "Usuário ou livro não encontrado."
         };
         return current;
       }
@@ -530,7 +530,7 @@ function assignBookToUser(userId, bookId) {
       if (!book.isActive) {
         result = {
           success: false,
-          message: "Este livro esta inativo no catalogo."
+          message: "Este livro está inativo no catálogo."
         };
         return current;
       }
@@ -538,7 +538,7 @@ function assignBookToUser(userId, bookId) {
       if (book.type !== "digital" && book.isPremium && !canAccessPremium(user.level)) {
         result = {
           success: false,
-          message: "Livros premium exigem nivel ouro."
+          message: "Livros premium exigem nível ouro."
         };
         return current;
       }
@@ -550,7 +550,7 @@ function assignBookToUser(userId, bookId) {
       if (existingBorrowed) {
         result = {
           success: false,
-          message: "Este usuario ja possui uma leitura ativa."
+          message: "Este usuário já possui uma leitura ativa."
         };
         return current;
       }
@@ -560,7 +560,7 @@ function assignBookToUser(userId, bookId) {
       if (book.type === "physical" && physicalStock <= 0) {
         result = {
           success: false,
-          message: "Nao ha estoque disponivel para este livro fisico."
+          message: "Não há estoque disponível para este livro físico."
         };
         return current;
       }
@@ -592,7 +592,7 @@ function assignBookToUser(userId, bookId) {
 
       result = {
         success: true,
-        message: "Livro adicionado com sucesso na leitura do usuario."
+        message: "Livro adicionado com sucesso na leitura do usuário."
       };
 
       return stabilizeAdminState({
@@ -655,7 +655,7 @@ function assignBookToUser(userId, bookId) {
   function requestLoan(input) {
     let result = {
       success: false,
-      message: "Nao foi possivel registrar a solicitacao."
+      message: "Não foi possível registrar a solicitação."
     };
 
     setState((current) => {
@@ -665,7 +665,7 @@ function assignBookToUser(userId, bookId) {
       if (!book || !user) {
         result = {
           success: false,
-          message: "Livro ou usuario nao encontrado."
+          message: "Livro ou usuário não encontrado."
         };
         return current;
       }
@@ -673,7 +673,7 @@ function assignBookToUser(userId, bookId) {
       if (!book.isActive) {
         result = {
           success: false,
-          message: "Este livro esta inativo no catalogo."
+          message: "Este livro está inativo no catálogo."
         };
         return current;
       }
@@ -681,7 +681,7 @@ function assignBookToUser(userId, bookId) {
       if (book.type !== "digital" && book.isPremium && !canAccessPremium(user.level)) {
         result = {
           success: false,
-          message: "Livros premium exigem nivel ouro."
+          message: "Livros premium exigem nível ouro."
         };
         return current;
       }
@@ -692,7 +692,7 @@ function assignBookToUser(userId, bookId) {
         result = {
           success: false,
           message:
-            "Seu cadastro ainda esta em aprovacao. Depois da validacao do administrador voce podera solicitar emprestimos fisicos."
+            "Seu cadastro ainda está em aprovação. Depois da validação do administrador você poderá solicitar empréstimos físicos."
         };
         return current;
       }
@@ -710,7 +710,7 @@ function assignBookToUser(userId, bookId) {
       if (duplicateLoan) {
         result = {
           success: false,
-          message: "Este livro ja esta associado a este usuario."
+          message: "Este livro já está associado a este usuário."
         };
         return current;
       }
@@ -771,7 +771,7 @@ function assignBookToUser(userId, bookId) {
           success: true,
           waitlist: nextWaitlist.entry,
           waitlistPosition: nextWaitlist.position,
-          message: `Livro indisponivel. Voce entrou na fila na posicao ${nextWaitlist.position}.`
+          message: `Livro indisponível. Você entrou na fila na posição ${nextWaitlist.position}.`
         };
 
         return stabilizeAdminState({
@@ -781,8 +781,8 @@ function assignBookToUser(userId, bookId) {
             userId: user.id,
             bookId: book.id,
             type: "waitlist",
-            title: "Voce entrou na fila",
-            message: `O livro \"${book.title}\" esta indisponivel. Voce esta na posicao ${nextWaitlist.position} da fila.`,
+            title: "Você entrou na fila",
+            message: `O livro \"${book.title}\" está indisponível. Você está na posição ${nextWaitlist.position} da fila.`,
             actionLabel: "Ver livro",
             actionTarget: "/livros"
           })
@@ -809,7 +809,7 @@ function assignBookToUser(userId, bookId) {
       result = {
         success: true,
         loan: nextLoan,
-        message: "Solicitacao enviada para aprovacao do admin."
+        message: "Solicitação enviada para aprovação do admin."
       };
 
       return stabilizeAdminState({
@@ -836,14 +836,14 @@ function assignBookToUser(userId, bookId) {
   function approveLoan(loanId, changes) {
     let result = {
       success: false,
-      message: "Nao foi possivel aprovar a solicitacao."
+      message: "Não foi possível aprovar a solicitação."
     };
 
     setState((current) => {
       if (!changes.responsible || !changes.location || !changes.dueAt) {
         result = {
           success: false,
-          message: "Informe responsavel, local e prazo para aprovar."
+          message: "Informe responsável, local e prazo para aprovar."
         };
         return current;
       }
@@ -855,7 +855,7 @@ function assignBookToUser(userId, bookId) {
       if (!target || !book || !user) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -863,7 +863,7 @@ function assignBookToUser(userId, bookId) {
       if (target.status !== "PENDING_APPROVAL") {
         result = {
           success: false,
-          message: "Apenas solicitacoes pendentes podem ser aprovadas."
+          message: "Apenas solicitações pendentes podem ser aprovadas."
         };
         return current;
       }
@@ -871,7 +871,7 @@ function assignBookToUser(userId, bookId) {
       if (book.type === "physical" && Number(book.availableQuantity ?? 0) <= 0) {
         result = {
           success: false,
-          message: "Nao ha estoque suficiente para liberar esta retirada."
+          message: "Não há estoque suficiente para liberar esta retirada."
         };
         return current;
       }
@@ -885,7 +885,7 @@ function assignBookToUser(userId, bookId) {
       const loans = current.loans.map((loan) => (loan.id === loanId ? updatedLoan : loan));
       result = {
         success: true,
-        message: "Solicitacao aprovada e pronta para retirada."
+        message: "Solicitação aprovada e pronta para retirada."
       };
 
       return {
@@ -903,7 +903,7 @@ function assignBookToUser(userId, bookId) {
           book,
           user,
           updatedLoan,
-          "Livro disponivel para retirada"
+          "Livro disponível para retirada"
         )
       };
     });
@@ -914,7 +914,7 @@ function assignBookToUser(userId, bookId) {
   function rejectLoan(loanId, changes = {}) {
     let result = {
       success: false,
-      message: "Nao foi possivel reprovar a solicitacao."
+      message: "Não foi possível reprovar a solicitação."
     };
 
     setState((current) => {
@@ -925,7 +925,7 @@ function assignBookToUser(userId, bookId) {
       if (!target || !book || !user) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -933,7 +933,7 @@ function assignBookToUser(userId, bookId) {
       if (target.status !== "PENDING_APPROVAL") {
         result = {
           success: false,
-          message: "Apenas solicitacoes pendentes podem ser reprovadas."
+          message: "Apenas solicitações pendentes podem ser reprovadas."
         };
         return current;
       }
@@ -951,7 +951,7 @@ function assignBookToUser(userId, bookId) {
       const loans = current.loans.map((loan) => (loan.id === loanId ? updatedLoan : loan));
       result = {
         success: true,
-        message: "Solicitacao reprovada."
+        message: "Solicitação reprovada."
       };
 
       return {
@@ -973,7 +973,7 @@ function assignBookToUser(userId, bookId) {
   function confirmPickup(loanId) {
     let result = {
       success: false,
-      message: "Nao foi possivel confirmar a retirada."
+      message: "Não foi possível confirmar a retirada."
     };
 
     setState((current) => {
@@ -984,7 +984,7 @@ function assignBookToUser(userId, bookId) {
       if (!target || !book) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -992,7 +992,7 @@ function assignBookToUser(userId, bookId) {
       if (target.status !== "READY_FOR_PICKUP") {
         result = {
           success: false,
-          message: "Este livro ainda nao esta liberado para confirmacao."
+          message: "Este livro ainda não está liberado para confirmação."
         };
         return current;
       }
@@ -1007,7 +1007,7 @@ function assignBookToUser(userId, bookId) {
       if (otherActiveLoan) {
         result = {
           success: false,
-          message: "Voce precisa devolver o livro atual antes de confirmar esta retirada."
+          message: "Você precisa devolver o livro atual antes de confirmar esta retirada."
         };
         return current;
       }
@@ -1039,7 +1039,7 @@ function assignBookToUser(userId, bookId) {
   function markReturned(loanId) {
     let result = {
       success: false,
-      message: "Nao foi possivel registrar a devolucao."
+      message: "Não foi possível registrar a devolução."
     };
 
     setState((current) => {
@@ -1048,7 +1048,7 @@ function assignBookToUser(userId, bookId) {
       if (!target) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -1088,7 +1088,7 @@ function assignBookToUser(userId, bookId) {
       );
       result = {
         success: true,
-        message: "Devolucao registrada e estoque atualizado."
+        message: "Devolução registrada e estoque atualizado."
       };
 
       return {
@@ -1107,7 +1107,7 @@ function assignBookToUser(userId, bookId) {
   function requestReturn(loanId) {
     let result = {
       success: false,
-      message: "Nao foi possivel solicitar a devolucao."
+      message: "Não foi possível solicitar a devolução."
     };
 
     setState((current) => {
@@ -1118,7 +1118,7 @@ function assignBookToUser(userId, bookId) {
       if (!target || !book || !user) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -1143,7 +1143,7 @@ function assignBookToUser(userId, bookId) {
       const loans = current.loans.map((loan) => (loan.id === loanId ? updatedLoan : loan));
       result = {
         success: true,
-        message: "Solicitacao de devolucao enviada. Aguarde a confirmacao do responsavel."
+        message: "Solicitação de devolução enviada. Aguarde a confirmação do responsável."
       };
 
       return stabilizeAdminState({
@@ -1166,7 +1166,7 @@ function assignBookToUser(userId, bookId) {
   function confirmReturn(loanId) {
     let result = {
       success: false,
-      message: "Nao foi possivel confirmar a devolucao."
+      message: "Não foi possível confirmar a devolução."
     };
 
     setState((current) => {
@@ -1177,7 +1177,7 @@ function assignBookToUser(userId, bookId) {
       if (!target || !book || !user) {
         result = {
           success: false,
-          message: "Emprestimo nao encontrado."
+          message: "Empréstimo não encontrado."
         };
         return current;
       }
@@ -1185,7 +1185,7 @@ function assignBookToUser(userId, bookId) {
       if (target.status !== "RETURN_REQUESTED") {
         result = {
           success: false,
-          message: "A devolucao ainda nao foi solicitada por este usuario."
+          message: "A devolução ainda não foi solicitada por este usuário."
         };
         return current;
       }
@@ -1225,7 +1225,7 @@ function assignBookToUser(userId, bookId) {
       );
       result = {
         success: true,
-        message: "Devolucao confirmada e estoque atualizado."
+        message: "Devolução confirmada e estoque atualizado."
       };
 
       return {
@@ -1554,7 +1554,7 @@ function pushLoanNotification(notifications, book, user, loan, title) {
       user,
       title,
       loan.status === "READY_FOR_PICKUP"
-        ? `O livro "${book.title}" esta disponivel para retirada.`
+        ? `O livro "${book.title}" está disponível para retirada.`
         : `O livro "${book.title}" foi liberado para leitura.`
     )
   );
@@ -1569,8 +1569,8 @@ function pushRejectedLoanNotification(notifications, book, user, loan) {
       userId: user.id,
       bookId: book.id,
       type: "loan",
-      title: "Solicitacao negada",
-      message: `Sua solicitacao para "${book.title}" foi negada. Fale com o responsavel pelas liberacoes.`,
+      title: "Solicitação negada",
+      message: `Sua solicitação para "${book.title}" foi negada. Fale com o responsável pelas liberações.`,
       actionLabel: "Ver minha conta",
       actionTarget: "/minha-conta",
       createdAt: new Date().toISOString(),
@@ -1599,8 +1599,8 @@ function pushNotificationsForAdminApproval(notifications, users, book, user, loa
       userId: user.id,
       bookId: book.id,
       type: "loan",
-      title: "Solicitacao enviada",
-      message: `Sua solicitacao para "${book.title}" foi enviada para aprovacao.`,
+      title: "Solicitação enviada",
+      message: `Sua solicitação para "${book.title}" foi enviada para aprovação.`,
       actionLabel: "Ver livro",
       actionTarget: "/livros",
       createdAt: new Date().toISOString(),
@@ -1618,7 +1618,7 @@ function pushNotificationsForAdminApproval(notifications, users, book, user, loa
         userId: admin.id,
         bookId: book.id,
         type: "loan-approval",
-        title: "Nova solicitacao de emprestimo",
+        title: "Nova solicitação de empréstimo",
         message: `${user.name} solicitou "${book.title}".`,
         actionLabel: "Abrir solicitacoes",
         actionTarget: "/admin/requests",
@@ -1764,7 +1764,7 @@ function promoteWaitlistAfterReturn({ state, bookId }) {
       book,
       user,
       loan,
-      "Livro disponivel para retirada"
+      "Livro disponível para retirada"
     );
 
     nextWaiting.status = "READY";

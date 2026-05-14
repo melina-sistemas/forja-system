@@ -7,19 +7,19 @@ const html = htm.bind(React.createElement);
 const MAIN_NAV = [
   { label: "Livros", to: "/livros", icon: "books" },
   { label: "Minha Conta", to: "/minha-conta", icon: "users" },
-  { label: "Usuarios", to: "/usuarios", icon: "users" },
+  { label: "Usuários", to: "/usuarios", icon: "users" },
   { label: "Desempenho", to: "/desempenho", icon: "chart" },
-  { label: "Relatorios", to: "/relatorios", icon: "report" }
+  { label: "Relatórios", to: "/relatorios", icon: "report" }
 ];
 
 const ADMIN_NAV = [
   { label: "Livros", to: "/admin/books", icon: "books" },
-  { label: "Solicitacoes", to: "/admin/loans", icon: "requests" },
-  { label: "Usuarios", to: "/admin/users", icon: "users" },
+  { label: "Solicitações", to: "/admin/loans", icon: "requests" },
+  { label: "Usuários", to: "/admin/users", icon: "users" },
   { label: "Regras", to: "/admin/rules", icon: "shield" },
-  { label: "Gamificacao", to: "/admin/gamification", icon: "trophy" },
+  { label: "Gamificação", to: "/admin/gamification", icon: "trophy" },
   { label: "Monitoramento", to: "/admin/monitoring", icon: "monitor" },
-  { label: "Personalizacao", to: "/admin/settings", icon: "settings" }
+  { label: "Personalização", to: "/admin/settings", icon: "settings" }
 ];
 
 export function Sidebar({ currentUser, isAuthenticated }) {
@@ -44,7 +44,7 @@ export function Sidebar({ currentUser, isAuthenticated }) {
 
       <nav className="sidebar-nav">
         <div className="sidebar-group">
-          <span className="sidebar-group-title">Navegacao</span>
+          <span className="sidebar-group-title">Navegação</span>
           ${visibleMainNav.map((item) => renderNavItem(item))}
         </div>
 
@@ -58,7 +58,7 @@ export function Sidebar({ currentUser, isAuthenticated }) {
                   <span className="sidebar-link-icon">
                     <${SidebarIcon} name="settings" />
                   </span>
-                  <span>Configuracoes</span>
+                  <span>Configurações</span>
                 </${NavLink}>
 
                 ${isAdminArea
@@ -77,14 +77,14 @@ export function Sidebar({ currentUser, isAuthenticated }) {
         ? html`
             <div className="sidebar-footer">
               <div className="sidebar-level-card">
-                <span className="sidebar-level-label">Seu nivel atual</span>
+                <span className="sidebar-level-label">Seu nível atual</span>
                 <strong>OURO</strong>
                 <div className="sidebar-level-row">
                   <span>Pontos</span>
                   <strong>2.350</strong>
                 </div>
                 <div className="sidebar-level-row">
-                  <span>Proximo nivel</span>
+                  <span>Próximo nível</span>
                   <strong>Diamante</strong>
                 </div>
                 <div className="sidebar-progress">
@@ -95,8 +95,8 @@ export function Sidebar({ currentUser, isAuthenticated }) {
 
               <div className="sidebar-levels">
                 <span className="level-badge bronze">Bronze</span>
-                <span className="level-badge silver">Silver</span>
-                <span className="level-badge gold">Gold</span>
+                <span className="level-badge silver">Prata</span>
+                <span className="level-badge gold">Ouro</span>
               </div>
             </div>
           `

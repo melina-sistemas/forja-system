@@ -1,4 +1,4 @@
-import { createLoanApiClient } from "../../services/loan-api.js";
+﻿import { createLoanApiClient } from "../../services/loan-api.js";
 import { ResultPanel } from "../../components/ResultPanel.js";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -80,7 +80,7 @@ export function LoanForm({
   return html`
     <section className="card">
       <div className="card-top">
-        <p className="section-tag">Tela de emprestimo</p>
+        <p className="section-tag">Tela de empréstimo</p>
         <h2>Pegar livro</h2>
         <p>
           Escolha um usuario e um livro na lista. O formulario mostra o nome,
@@ -90,7 +90,7 @@ export function LoanForm({
 
       <form className="form-stack" onSubmit=${handleSubmit}>
         <label>
-          <span>Usuario</span>
+          <span>Usuário</span>
           <select
             value=${selectedUserId}
             onChange=${(event) => onUserChange?.(event.target.value)}
@@ -118,7 +118,7 @@ export function LoanForm({
                 <option key=${book.id} value=${book.id}>
                   ${book.title}
                   ${book.isPremium ? "- Premium" : ""}
-                  (${book.availableCopies} disponivel/is)
+                  (${book.availableCopies} disponíveis)
                 </option>
               `
             )}
@@ -163,7 +163,7 @@ export function LoanForm({
                   <strong>${result.data.book.availableCopies}</strong>
                 </div>
                 <div>
-                  <span className="metric-label">Usuario</span>
+                  <span className="metric-label">Usuário</span>
                   <strong>${result.data.user.name}</strong>
                 </div>
                 <div>
@@ -202,3 +202,4 @@ function translateUserLevel(level) {
       return level;
   }
 }
+

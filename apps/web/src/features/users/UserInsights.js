@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import htm from "htm";
 
 const html = htm.bind(React.createElement);
-
 const PAGE_SIZE = 7;
 
 export function UserInsights({ users }) {
@@ -38,9 +37,9 @@ export function UserInsights({ users }) {
       <article className="card">
         <div className="card-top">
           <p className="section-tag">Ranking geral</p>
-          <h2>Quem esta liderando a leitura</h2>
+          <h2>Quem está liderando a leitura</h2>
           <p>
-            A lista e ordenada da maior pontuacao para a menor. Navegue pela pagina para ver
+            A lista é ordenada da maior pontuação para a menor. Navegue pela página para ver
             o ranking completo da equipe.
           </p>
         </div>
@@ -63,7 +62,7 @@ export function UserInsights({ users }) {
 
         <div className="ranking-pagination">
           <span className="ranking-page-indicator">
-            Pagina ${page} de ${totalPages}
+            Página ${page} de ${totalPages}
           </span>
           <div className="ranking-pagination-actions">
             <button
@@ -80,7 +79,7 @@ export function UserInsights({ users }) {
               disabled=${page === totalPages}
               onClick=${() => setPage((current) => Math.min(totalPages, current + 1))}
             >
-              Proxima
+              Próxima
             </button>
           </div>
         </div>

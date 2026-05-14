@@ -1,4 +1,4 @@
-import { UserDirectory } from "../features/users/UserDirectory.js";
+﻿import { UserDirectory } from "../features/users/UserDirectory.js";
 import { UserInsights } from "../features/users/UserInsights.js";
 import { UserHistoryPanel } from "../features/users/UserHistoryPanel.js";
 import { PageLayout } from "../components/PageLayout.js";
@@ -35,18 +35,18 @@ export function UsersPage({
 
   return html`
     <${PageLayout}
-      eyebrow="Usuarios"
+      eyebrow="Usuários"
       title=${copy.title}
       description=${copy.subtitle}
       stats=${[
         { label: "Colaboradores", value: totalUsers },
         { label: "Admins", value: admins },
-        { label: "Nivel ouro", value: goldUsers }
+        { label: "Nível ouro", value: goldUsers }
       ]}
     >
       <${Section}
-        title="Diretorio da equipe"
-        description="Selecione um colaborador para navegar entre perfil, ranking e historico."
+        title="Diretório da equipe"
+        description="Selecione um colaborador para navegar entre perfil, ranking e histórico."
       >
         <${UserDirectory}
           users=${users}
@@ -58,7 +58,7 @@ export function UsersPage({
       ${users.length === 0
         ? html`
             <${EmptyState}
-              title="Nenhum usuario encontrado"
+              title="Nenhum usuário encontrado"
               description="Quando os colaboradores forem carregados, o perfil e o ranking aparecem aqui."
             />
           `
@@ -106,22 +106,24 @@ function getPageCopy(view) {
     case "ranking":
       return {
         title: "Ranking dos leitores",
-        subtitle: "Veja quem lidera a pontuacao e abra o perfil de qualquer colaborador."
+        subtitle: "Veja quem lidera a pontuação e abra o perfil de qualquer colaborador."
       };
     case "profile":
       return {
-        title: "Perfil do usuario",
-        subtitle: "Acompanhe nivel atual, pontuacao, progresso e acesso aos premium."
+        title: "Perfil do usuário",
+        subtitle: "Acompanhe nível atual, pontuação, progresso e acesso aos premium."
       };
     case "history":
       return {
-        title: "Historico de leitura",
-        subtitle: "Consulte emprestimos e devolucoes ja registrados para cada usuario."
+        title: "Histórico de leitura",
+        subtitle: "Consulte empréstimos e devoluções já registrados para cada usuário."
       };
     default:
       return {
-        title: "Usuarios",
-        subtitle: "Selecione um colaborador para navegar entre perfil, ranking e historico."
+        title: "Usuários",
+        subtitle: "Selecione um colaborador para navegar entre perfil, ranking e histórico."
       };
   }
 }
+
+

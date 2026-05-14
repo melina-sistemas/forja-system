@@ -12,7 +12,7 @@ export function AccountRequestSentPage() {
         <div className="auth-shell auth-shell--login">
           <aside className="auth-aside auth-aside--login">
             <span className="auth-tag">FORJA</span>
-            <h1>Sua solicitacao foi enviada.</h1>
+            <h1>Sua solicitação foi enviada.</h1>
             <p>
               Agora um administrador da plataforma precisa analisar e liberar o seu acesso.
             </p>
@@ -20,17 +20,17 @@ export function AccountRequestSentPage() {
 
           <div className="auth-card auth-card--login">
             <div className="auth-confirmation">
-              <span className="auth-confirmation-icon">✓</span>
-              <h1>Cadastro em analise</h1>
+              <span className="auth-confirmation-icon" aria-hidden="true">✓</span>
+              <h1>Cadastro em análise</h1>
               <p>
-                Assim que um dos admins aprovar seu cadastro, voce podera entrar com o e-mail e a
-                senha definidos no formulario.
+                Assim que um dos administradores aprovar seu cadastro, você poderá entrar com o
+                e-mail e a senha definidos no formulário.
               </p>
 
               <div className="auth-confirmation-actions">
                 <${Link} to="/livros" className="auth-submit">Voltar ao acervo</${Link}>
                 <${Link} to="/entrar" className="auth-secondary-link">
-                  Ja fui aprovado
+                  Já fui aprovado
                 </${Link}>
               </div>
             </div>

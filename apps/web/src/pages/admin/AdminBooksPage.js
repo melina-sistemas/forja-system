@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import htm from "htm";
 import { AdminPageLayout } from "../../components/AdminPageLayout.js";
 import { createLoanApiClient } from "../../services/loan-api.js";
@@ -25,10 +25,10 @@ const EMPTY_BOOK = {
 
 const FILTER_OPTIONS = [
   { value: "all", label: "Todos os livros" },
-  { value: "physical", label: "Somente fisicos" },
+  { value: "physical", label: "Somente físicos" },
   { value: "digital", label: "Somente digitais" },
   { value: "premium", label: "Premium" },
-  { value: "active", label: "Disponiveis" },
+  { value: "active", label: "Disponíveis" },
   { value: "unavailable", label: "Sem estoque" }
 ];
 
@@ -252,7 +252,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
     event.preventDefault();
 
     if (!String(form.title || "").trim()) {
-      setImportMessage("Preencha o titulo do livro antes de salvar.");
+          setImportMessage("Preencha o título do livro antes de salvar.");
       return;
     }
 
@@ -262,7 +262,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
     }
 
     if (!Number.isFinite(Number(form.availableQuantity)) || Number(form.availableQuantity) < 0) {
-      setImportMessage("Informe uma quantidade disponivel valida.");
+    setImportMessage("Informe uma quantidade disponível válida.");
       return;
     }
 
@@ -335,7 +335,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
         const importedBooks = parseBookSpreadsheet(csvText);
 
         if (!importedBooks.length) {
-          setImportMessage("A planilha nao possui livros validos para importar.");
+          setImportMessage("A planilha não possui livros válidos para importar.");
           return;
         }
 
@@ -353,9 +353,9 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
 
       if (result?.success && Array.isArray(result.importedBooks)) {
         actions.importBooks(result.importedBooks);
-        setImportMessage(`${result.importedBooks.length} livros importados para revisao.`);
+        setImportMessage(`${result.importedBooks.length} livros importados para revisão.`);
       } else {
-        setImportMessage(result?.error?.message ?? "Nao foi possivel importar o PDF.");
+        setImportMessage(result?.error?.message ?? "Não foi possível importar o PDF.");
       }
     } catch (error) {
       setImportMessage(error instanceof Error ? error.message : String(error));
@@ -385,7 +385,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
 
   return html`
     <${AdminPageLayout}
-      title="Catalogo de Livros"
+      title="Catálogo de Livros"
       breadcrumb="Livros"
       description="Explore, organize e destaque o acervo da biblioteca."
       actions=${actionButtons}
@@ -398,8 +398,8 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
           </div>
           <div className="admin-kpi-copy">
             <strong>${overview.availableBooks}</strong>
-            <span>Livros disponiveis</span>
-            <small>Catalogo pronto para retirada ou acesso imediato.</small>
+            <span>Livros disponíveis</span>
+            <small>Catálogo pronto para retirada ou acesso imediato.</small>
           </div>
         </article>
 
@@ -409,7 +409,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
           </div>
           <div className="admin-kpi-copy">
             <strong>${overview.activeUsers}</strong>
-            <span>Usuarios ativos</span>
+            <span>Usuários ativos</span>
             <small>Equipe participando da jornada de leitura.</small>
           </div>
         </article>
@@ -420,8 +420,8 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
           </div>
           <div className="admin-kpi-copy">
             <strong>${overview.completedLoans}</strong>
-            <span>Emprestimos finalizados</span>
-            <small>Leituras concluidas com devolucao registrada.</small>
+            <span>Empréstimos finalizados</span>
+            <small>Leituras concluídas com devolução registrada.</small>
           </div>
         </article>
 
@@ -450,7 +450,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
 
       <article className="admin-card admin-table-card">
         <div className="admin-card-header">
-          <h3>Catalogo</h3>
+          <h3>Catálogo</h3>
           <span className="admin-pill">Mostrando ${filteredBooks.length} livro(s)</span>
         </div>
 
@@ -459,14 +459,14 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
             <thead>
               <tr>
                 <th>Capa</th>
-                <th>Titulo</th>
+                <th>Título</th>
                 <th>Autor</th>
                 <th>Categoria</th>
                 <th>Tipo</th>
                 <th>Estoque</th>
-                <th>Disponivel</th>
+                <th>Disponível</th>
                 <th>Status</th>
-                <th>Acoes</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -500,7 +500,7 @@ export function AdminBooksPage({ books, users, loans, actions, apiBaseUrl }) {
                     <td>${book.category || "-"}</td>
                     <td>
                       <span className=${`admin-badge type-${book.type}`}>
-                        ${book.type === "digital" ? "Digital" : "Fisico"}
+                        ${book.type === "digital" ? "Digital" : "Físico"}
                       </span>
                     </td>
                     <td>${book.type === "digital" ? "Infinito" : book.totalQuantity}</td>
@@ -634,17 +634,17 @@ function BookImportModal({ busy, importMessage, templateUrl, onClose, onImport }
   return html`
     <div className="admin-modal-backdrop" onClick=${onClose}>
       <div className="admin-modal admin-modal-confirm" onClick=${(event) => event.stopPropagation()}>
-        <button type="button" className="admin-modal-close" onClick=${onClose}>Ã—</button>
+              <button type="button" className="admin-modal-close" onClick=${onClose}>×</button>
         <div className="admin-modal-header">
           <div>
             <h3>Importar via PDF</h3>
             <p>
-              Envie um PDF com a lista de livros para gerar registros editaveis no catalogo.
+              Envie um PDF com a lista de livros para gerar registros editáveis no catálogo.
               Se preferir, clique em
               <a className="admin-inline-link" href=${templateUrl} download>
                 modelo de planilha
               </a>
-              para baixar o arquivo compativel, preencher e subir por este mesmo modal.
+              para baixar o arquivo compatível, preencher e subir por este mesmo modal.
             </p>
           </div>
         </div>
@@ -688,18 +688,18 @@ function BookEditorModal({
   return html`
     <div className="admin-modal-backdrop" onClick=${onClose}>
       <div className="admin-modal admin-modal-wide" onClick=${(event) => event.stopPropagation()}>
-        <button type="button" className="admin-modal-close" onClick=${onClose}>Ã—</button>
+              <button type="button" className="admin-modal-close" onClick=${onClose}>×</button>
 
         <div className="admin-modal-header">
           <div>
             <h3>${editingId ? "Editar livro" : "Novo livro"}</h3>
-            <p>Preencha os dados do titulo para disponibilizar o livro no acervo interno.</p>
+            <p>Preencha os dados do título para disponibilizar o livro no acervo interno.</p>
           </div>
         </div>
 
         <form className="admin-form admin-form-grid" onSubmit=${onSubmit}>
           <label className=${isTitleValid ? "" : "admin-field-required"}>
-            <span>Titulo <strong>(obrigatorio)</strong></span>
+            <span>Título <strong>(obrigatório)</strong></span>
             <input
               value=${form.title}
               onInput=${(event) => onFieldChange("title", event.target.value)}
@@ -709,7 +709,7 @@ function BookEditorModal({
           </label>
 
           <label className=${isAuthorValid ? "" : "admin-field-required"}>
-            <span>Autor <strong>(obrigatorio)</strong></span>
+            <span>Autor <strong>(obrigatório)</strong></span>
             <input
               value=${form.author}
               onInput=${(event) => onFieldChange("author", event.target.value)}
@@ -724,7 +724,7 @@ function BookEditorModal({
               rows="4"
               value=${form.summary}
               onInput=${(event) => onFieldChange("summary", event.target.value)}
-              placeholder="Adicione uma descricao curta para contextualizar o livro no catalogo."
+              placeholder="Adicione uma descrição curta para contextualizar o livro no catálogo."
             ></textarea>
           </label>
 
@@ -742,7 +742,7 @@ function BookEditorModal({
               value=${form.type}
               onChange=${(event) => onTypeChange(event.target.value)}
             >
-              <option value="physical">Fisico</option>
+              <option value="physical">Físico</option>
               <option value="digital">Digital</option>
             </select>
             ${form.type === "digital"
@@ -776,7 +776,7 @@ function BookEditorModal({
           </label>
 
           <label className=${isAvailableQuantityValid ? "" : "admin-field-required"}>
-            <span>Quantidade disponivel <strong>(obrigatorio)</strong></span>
+            <span>Quantidade disponível <strong>(obrigatório)</strong></span>
             <input
               type="number"
               min="0"
@@ -789,7 +789,7 @@ function BookEditorModal({
           <label className="admin-form-span-2">
             <span>URL da capa</span>
             <small className="admin-field-note">
-              Copie o link direto da imagem da capa em um local publico, como o site da editora,
+              Copie o link direto da imagem da capa em um local público, como o site da editora,
               uma pasta compartilhada com acesso liberado ou uma CDN do seu time.
             </small>
             <input
@@ -803,7 +803,7 @@ function BookEditorModal({
             <div className="admin-switch-head">
               <div className="admin-switch-copy">
                 <strong>Livro premium</strong>
-                <small>Destaca o titulo para acessos e beneficios especiais.</small>
+                <small>Destaca o título para acessos e benefícios especiais.</small>
               </div>
               <button
                 type="button"
@@ -841,7 +841,7 @@ function BookEditorModal({
           <div className="admin-modal-actions admin-form-span-2">
             <button type="button" className="admin-secondary" onClick=${onClose}>Cancelar</button>
             <button type="submit" className="admin-primary">
-              ${editingId ? "Salvar alteracoes" : "Salvar livro"}
+              ${editingId ? "Salvar alterações" : "Salvar livro"}
             </button>
           </div>
         </form>
@@ -858,7 +858,7 @@ function DigitalBookUploadModal({ fileName, onClose, onUpload }) {
         <div className="admin-modal-header">
           <div>
             <h3>Anexar PDF do livro digital</h3>
-            <p>Selecione o arquivo em PDF que sera disponibilizado para leitura dos clientes.</p>
+            <p>Selecione o arquivo em PDF que será disponibilizado para leitura dos clientes.</p>
           </div>
         </div>
 
@@ -895,7 +895,7 @@ function resetForm(setForm, setEditingId) {
 
 function getBookStatus(book) {
   if (!book.isActive) {
-    return { key: "inactive", label: "Indisponivel" };
+    return { key: "inactive", label: "Indisponível" };
   }
 
   if (book.type === "physical" && Number(book.availableQuantity ?? 0) <= 0) {
@@ -1142,3 +1142,5 @@ function TableActionIcon({ name }) {
 
   return html`<svg ...${common}><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>`;
 }
+
+

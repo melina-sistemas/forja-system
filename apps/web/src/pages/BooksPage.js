@@ -1,4 +1,4 @@
-import { BookCatalog } from "../features/books/BookCatalog.js";
+﻿import { BookCatalog } from "../features/books/BookCatalog.js";
 import { PageLayout } from "../components/PageLayout.js";
 import { Section } from "../components/Section.js";
 import { FeedbackMessage } from "../components/FeedbackMessage.js";
@@ -49,15 +49,15 @@ export function BooksPage({
 
   const totalBooks = visibleBooks.length;
   const availableBooks = visibleBooks.filter(
-      (book) =>
-        book.type === "digital" ||
-        (book.isActive && Number(book.availableCopies ?? book.availableQuantity ?? 0) > 0)
+    (book) =>
+      book.type === "digital" ||
+      (book.isActive && Number(book.availableCopies ?? book.availableQuantity ?? 0) > 0)
   ).length;
   const premiumBooks = visibleBooks.filter((book) => book.isPremium).length;
   const stats = [
-    { label: "Catalogo", value: `${totalBooks} livros` },
-    { label: "Disponiveis", value: `${availableBooks} agora` },
-    { label: "Premium", value: `${premiumBooks} titulos` }
+    { label: "Catálogo", value: `${totalBooks} livros` },
+    { label: "Disponíveis", value: `${availableBooks} agora` },
+    { label: "Premium", value: `${premiumBooks} títulos` }
   ];
 
   return html`
@@ -71,8 +71,8 @@ export function BooksPage({
         ? html`
             <${FeedbackMessage}
               tone="info"
-              title="Cadastro em aprovacao"
-              message="Voce ja pode navegar pelos livros e pela sua conta, mas emprestimos fisicos continuam bloqueados ate a validacao do administrador."
+              title="Cadastro em aprovação"
+              message="Você já pode navegar pelos livros e pela sua conta, mas empréstimos físicos continuam bloqueados até a validação do administrador."
             />
           `
         : null}
@@ -93,7 +93,7 @@ export function BooksPage({
           aria-pressed=${bookTypeFilter === "physical"}
           onClick=${() => setBookTypeFilter("physical")}
         >
-          <span>Fisicos</span>
+          <span>Físicos</span>
           <strong>${filterCounts.physical}</strong>
         </button>
         <button
@@ -111,7 +111,7 @@ export function BooksPage({
         ? html`
             <${FeedbackMessage}
               tone="error"
-              title="Falha ao carregar o catalogo"
+              title="Falha ao carregar o catálogo"
               message=${errorMessage}
             />
           `
@@ -119,7 +119,7 @@ export function BooksPage({
 
       <${Section}
         title="Vitrine de livros"
-        description="Clique em qualquer capa para ver os detalhes e seguir com a solicitacao ou acesso."
+        description="Clique em qualquer capa para ver os detalhes e seguir com a solicitação ou acesso."
       >
         <${BookCatalog}
           books=${visibleBooks}
@@ -140,3 +140,4 @@ export function BooksPage({
     <//>
   `;
 }
+

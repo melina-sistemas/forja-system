@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import htm from "htm";
 import { PageLayout } from "../../components/PageLayout.js";
 import { FeedbackMessage } from "../../components/FeedbackMessage.js";
@@ -39,7 +39,7 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
     if (result?.message) {
       setFeedback({
         tone: result.success ? "success" : "error",
-        title: result.success ? "Acesso liberado" : "Nao foi possivel entrar",
+        title: result.success ? "Acesso liberado" : "Não foi possível entrar",
         message: result.message
       });
     }
@@ -51,7 +51,7 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
     if (result?.message) {
       setFeedback({
         tone: result.success ? "success" : "error",
-        title: result.success ? "Solicitacao enviada" : "Nao foi possivel cadastrar",
+        title: result.success ? "Solicitação enviada" : "Não foi possível cadastrar",
         message: result.message
       });
     }
@@ -63,18 +63,18 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
       : "Crie seu acesso para evoluir com a biblioteca FORJA.";
   const asideDescription =
     isLoginMode
-      ? "Use o seu e-mail corporativo para acessar livros, progresso e recomendacoes da equipe."
-      : "Complete seu cadastro para solicitar acesso ao sistema e acompanhar sua evolucao profissional.";
+      ? "Use o seu e-mail corporativo para acessar livros, progresso e recomendações da equipe."
+      : "Complete seu cadastro para solicitar acesso ao sistema e acompanhar sua evolução profissional.";
   const asideItems =
     isLoginMode
       ? [
           {
             title: "Acesso imediato",
-            description: "Entre para consultar leituras em andamento, score e livros disponiveis."
+            description: "Entre para consultar leituras em andamento, score e livros disponíveis."
           },
           {
             title: "Ambiente centralizado",
-            description: "Tudo fica reunido em um unico espaco, sem precisar procurar em varias planilhas."
+            description: "Tudo fica reunido em um único espaço, sem precisar procurar em várias planilhas."
           }
         ]
       : [
@@ -83,8 +83,8 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
             description: "Livros recomendados conforme o momento profissional de cada pessoa."
           },
           {
-            title: "Progresso visivel",
-            description: "Ranking, score, nivel e historico concentrados no mesmo ambiente."
+            title: "Progresso visível",
+            description: "Ranking, score, nível e histórico concentrados no mesmo ambiente."
           },
           {
             title: "Acesso controlado",
@@ -156,7 +156,7 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
                             ...current,
                           email: event.target.value
                         }))}
-                        placeholder="voce@empresa.com"
+                        placeholder="você@empresa.com"
                       />
                     </label>
 
@@ -215,7 +215,7 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
                             ...current,
                             email: event.target.value
                           }))}
-                        placeholder="voce@empresa.com"
+                        placeholder="você@empresa.com"
                       />
                     </label>
 
@@ -331,3 +331,5 @@ export function AuthPage({ mode, onModeChange, onClose, onLogin, onRegister }) {
     <//>
   `;
 }
+
+

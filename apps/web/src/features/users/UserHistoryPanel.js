@@ -30,11 +30,11 @@ export function UserHistoryPanel({
   return html`
     <section className="panel-block">
       <div className="panel-header">
-        <h2>Historico</h2>
+        <h2>Histórico</h2>
         <p className="panel-text">
           ${selectedUser
             ? `Leituras vinculadas a ${selectedUser.name}.`
-            : "Selecione um usuario para ver o historico."}
+            : "Selecione um usuário para ver o histórico."}
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export function UserHistoryPanel({
               )}
             </div>
           `
-        : html`<p className="panel-text">Nenhum historico encontrado para este usuario.</p>`}
+        : html`<p className="panel-text">Nenhum histórico encontrado para este usuário.</p>`}
     </section>
   `;
 }

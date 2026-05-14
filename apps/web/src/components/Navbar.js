@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import htm from "htm";
 import { Link, NavLink } from "react-router-dom";
 
@@ -10,30 +10,30 @@ const MENU_GROUPS = [
     to: "/livros",
     items: [
       { label: "Todos os livros", to: "/livros/todos" },
-      { label: "Disponiveis", to: "/livros/disponiveis" },
+      { label: "Disponíveis", to: "/livros/disponiveis" },
       { label: "Emprestados", to: "/livros/emprestados" },
       { label: "Premium", to: "/livros/premium" }
     ]
   },
   {
-    label: "Usuarios",
+    label: "Usuários",
     to: "/usuarios",
     items: [
       { label: "Ranking", to: "/usuarios/ranking" },
       { label: "Perfil", to: "/usuarios/perfil" },
-      { label: "Historico", to: "/usuarios/historico" }
+      { label: "Histórico", to: "/usuarios/historico" }
     ]
   },
   {
     label: "Desempenho",
     to: "/desempenho",
     items: [
-      { label: "Metricas gerais", to: "/desempenho/metricas-gerais" },
-      { label: "Evolucao", to: "/desempenho/evolucao" }
+      { label: "Métricas gerais", to: "/desempenho/metricas-gerais" },
+      { label: "Evolução", to: "/desempenho/evolucao" }
     ]
   },
   {
-    label: "Relatorios",
+    label: "Relatórios",
     to: "/relatorios",
     items: [
       { label: "Dashboard", to: "/relatorios/dashboard" },
@@ -43,17 +43,17 @@ const MENU_GROUPS = [
 ];
 
 const ADMIN_GROUP = {
-  label: "Admin",
+    label: "Admin",
   to: "/admin/books",
   items: [
     { label: "Livros", to: "/admin/books" },
-    { label: "Solicitacoes", to: "/admin/requests" },
-    { label: "Usuarios", to: "/admin/users" },
+    { label: "Solicitações", to: "/admin/requests" },
+    { label: "Usuários", to: "/admin/users" },
     { label: "Regras", to: "/admin/rules" },
-    { label: "Gamificacao", to: "/admin/gamification" },
-    { label: "Emprestimos", to: "/admin/loans" },
+    { label: "Gamificação", to: "/admin/gamification" },
+    { label: "Empréstimos", to: "/admin/loans" },
     { label: "Monitoramento", to: "/admin/monitoring" },
-    { label: "Configuracoes", to: "/admin/settings" }
+    { label: "Configurações", to: "/admin/settings" }
   ]
 };
 
@@ -112,3 +112,4 @@ export function Navbar({ currentUser }) {
     </nav>
   `;
 }
+

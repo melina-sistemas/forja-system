@@ -1,11 +1,10 @@
+import React, { useMemo } from "react";
+import htm from "htm";
 import { UserInsights } from "../features/users/UserInsights.js";
 import { ScoreBoard } from "../features/users/ScoreBoard.js";
 import { PageLayout } from "../components/PageLayout.js";
 import { Section } from "../components/Section.js";
 import { EmptyState } from "../components/EmptyState.js";
-
-import React, { useMemo } from "react";
-import htm from "htm";
 
 const html = htm.bind(React.createElement);
 
@@ -17,7 +16,6 @@ export function PerformancePage({
   onSelectUser
 }) {
   const filteredUsers = useMemo(() => users, [users]);
-
   const copy = getPageCopy(view);
   const bestReader = [...filteredUsers].sort(
     (left, right) => (right.readingScore ?? 0) - (left.readingScore ?? 0)
@@ -30,8 +28,8 @@ export function PerformancePage({
       description=${copy.subtitle}
       stats=${[
         { label: "Top score", value: bestReader ? `${bestReader.readingScore} pts` : "-" },
-        { label: "Leitor lider", value: bestReader?.name ?? "-" },
-        { label: "Usuarios no score", value: filteredUsers.length }
+        { label: "Leitor líder", value: bestReader?.name ?? "-" },
+        { label: "Usuários no score", value: filteredUsers.length }
       ]}
     >
       ${filteredUsers.length === 0
@@ -47,7 +45,7 @@ export function PerformancePage({
         ? html`
             <${Section}
               title="Score da equipe"
-              description="Compare rapidamente a pontuacao acumulada e identifique quem mais evoluiu."
+              description="Compare rapidamente a pontuação acumulada e identifique quem mais evoluiu."
             >
               <${ScoreBoard}
                 users=${filteredUsers}
@@ -62,7 +60,7 @@ export function PerformancePage({
         ? html`
             <${Section}
               title="Ranking geral"
-              description="Veja a classificacao da equipe com paginação e acompanhe a evolucao por grupos menores."
+              description="Veja a classificação da equipe com paginação e acompanhe a evolução por grupos menores."
             >
               <${UserInsights}
                 users=${filteredUsers}
@@ -79,18 +77,18 @@ function getPageCopy(view) {
   switch (view) {
     case "metrics":
       return {
-        title: "Metricas gerais",
-        subtitle: "Compare score, posicao no ranking e leituras concluidas da equipe."
+        title: "Métricas gerais",
+        subtitle: "Compare score, posição no ranking e leituras concluídas da equipe."
       };
     case "evolution":
       return {
-        title: "Evolucao",
-        subtitle: "Acompanhe o progresso de nivel e a evolucao geral da equipe."
+        title: "Evolução",
+        subtitle: "Acompanhe o progresso de nível e a evolução geral da equipe."
       };
     default:
       return {
         title: "Desempenho",
-        subtitle: "Uma visao geral da evolucao de leitura e do score acumulado pela equipe."
+        subtitle: "Uma visão geral da evolução de leitura e do score acumulado pela equipe."
       };
   }
 }

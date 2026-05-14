@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import htm from "htm";
 import { PageLayout } from "../components/PageLayout.js";
 import { Section } from "../components/Section.js";
@@ -76,7 +76,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
   const topStats = [
     { label: "Livros lidos", value: readLoans.length },
     { label: "Em andamento", value: activeLoans.length },
-    { label: "Tempo medio", value: averageDays ? `${averageDays} dias` : "-" }
+    { label: "Tempo médio", value: averageDays ? `${averageDays} dias` : "-" }
   ];
 
   const profileCompletion = calculateProfileCompletion(profileForm);
@@ -85,7 +85,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
     <${PageLayout}
       eyebrow="Minha conta"
       title="Minha Conta"
-      description="Seu espaco pessoal para organizar leituras e manter seus dados atualizados."
+      description="Seu espaço pessoal para organizar leituras e manter seus dados atualizados."
       stats=${topStats}
     >
       ${feedback
@@ -102,8 +102,8 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
         ? html`
             <${FeedbackMessage}
               tone="info"
-              title="Acesso em aprovacao"
-              message="Seu cadastro esta em aprovacao. Voce pode editar seus dados, acompanhar leituras e consultar livros digitais permitidos, mas emprestimos fisicos ainda aguardam liberacao."
+              title="Acesso em aprovação"
+              message="Seu cadastro está em aprovação. Você pode editar seus dados, acompanhar leituras e consultar livros digitais permitidos, mas empréstimos físicos ainda aguardam liberação."
             />
           `
         : null}
@@ -157,7 +157,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                             value=${profileForm.name}
                             onInput=${(event) =>
                               setProfileForm((current) => ({ ...current, name: event.target.value }))}
-                            placeholder="Como voce deseja aparecer no sistema"
+                        placeholder="Como você deseja aparecer no sistema"
                           />
                         </label>
 
@@ -168,7 +168,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                             value=${profileForm.email}
                             onInput=${(event) =>
                               setProfileForm((current) => ({ ...current, email: event.target.value }))}
-                            placeholder="voce@empresa.com"
+                            placeholder="você@empresa.com"
                           />
                         </label>
 
@@ -238,7 +238,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                         >
                           ${showPasswordForm ? "Cancelar troca de senha" : "Trocar senha"}
                         </button>
-                        <button type="submit" className="admin-primary">Salvar alteracoes</button>
+                        <button type="submit" className="admin-primary">Salvar alterações</button>
                       </div>
                     </form>
 
@@ -252,7 +252,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                               if (!passwordForm.password || passwordForm.password !== passwordForm.confirmPassword) {
                                 setFeedback({
                                   tone: "error",
-                                  title: "Senha invalida",
+                                  title: "Senha inválida",
                                   message: "Confirme a nova senha corretamente para continuar."
                                 });
                                 return;
@@ -261,7 +261,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                               const result = actions.changePassword(currentUser.id, passwordForm.password);
                               setFeedback({
                                 tone: result.success ? "success" : "error",
-                                title: result.success ? "Senha atualizada" : "Nao foi possivel atualizar",
+                                title: result.success ? "Senha atualizada" : "Não foi possível atualizar",
                                 message: result.message
                               });
                               if (result.success) {
@@ -322,7 +322,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
             <div className="account-block-heading">
               <div>
                 <h3>Leituras e filas</h3>
-                <p>Acompanhe seus emprestimos atuais, reservas e a posicao na fila de espera.</p>
+                <p>Acompanhe seus empréstimos atuais, reservas e a posição na fila de espera.</p>
               </div>
             </div>
 
@@ -347,7 +347,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                               ${loan.status === "READY_FOR_PICKUP"
                                 ? `Retire ate ${formatDate(loan.readyUntil || loan.dueAt)}`
                                 : loan.status === "BORROWED"
-                                ? `Devolucao prevista para ${formatDate(loan.dueAt)}`
+                                ? `Devolução prevista para ${formatDate(loan.dueAt)}`
                                 : `Solicitado em ${formatDate(loan.requestedAt)}`}
                             </small>
                           </div>
@@ -363,7 +363,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                                     const result = actions.markReturned(loan.id);
                                     setFeedback({
                                       tone: result.success ? "success" : "error",
-                                      title: result.success ? "Devolucao registrada" : "Nao foi possivel devolver",
+                                      title: result.success ? "Devolução registrada" : "Não foi possível devolver",
                                       message: result.message
                                     });
                                   }}
@@ -380,7 +380,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                                     const result = actions.confirmPickup(loan.id);
                                     setFeedback({
                                       tone: result.success ? "success" : "error",
-                                      title: result.success ? "Retirada confirmada" : "Nao foi possivel confirmar",
+                                      title: result.success ? "Retirada confirmada" : "Não foi possível confirmar",
                                       message: result.message
                                     });
                                   }}
@@ -396,7 +396,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                 : html`
                     <article className="account-reading-card account-empty-card">
                       <strong>Nenhuma leitura em andamento</strong>
-                      <span>Quando houver emprestimos ou reservas, eles aparecem aqui.</span>
+                      <span>Quando houver empréstimos ou reservas, eles aparecem aqui.</span>
                     </article>
                   `}
             </div>
@@ -405,7 +405,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
               <div className="account-panel-head compact">
                 <div>
                   <h4>Fila de espera</h4>
-                  <p>Livros que voce quer ler, mas ainda aguardam disponibilidade.</p>
+                  <p>Livros que você quer ler, mas ainda aguardam disponibilidade.</p>
                 </div>
               </div>
 
@@ -417,7 +417,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                         return html`
                           <article key=${entry.id} className="account-waitlist-card">
                             <div>
-                              <strong>${book?.title || "Livro indisponivel"}</strong>
+                              <strong>${book?.title || "Livro indisponível"}</strong>
                               <p>${book?.author || "Biblioteca interna"}</p>
                             </div>
                             <span className="account-soft-pill">Fila #${entry.position || 1}</span>
@@ -435,8 +435,8 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
           <div className="account-hub-block">
             <div className="account-block-heading">
               <div>
-                <h3>Recomendacoes para voce</h3>
-                <p>Sugestoes baseadas no que voce ja leu e no que faz sentido para o seu perfil.</p>
+                <h3>Recomendações para você</h3>
+                <p>Sugestões baseadas no que você já leu e no que faz sentido para o seu perfil.</p>
               </div>
             </div>
 
@@ -469,8 +469,8 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
                   )
                 : html`
                     <article className="account-reading-card account-empty-card">
-                      <strong>Sem recomendacoes no momento</strong>
-                      <span>A FORJA vai sugerir leituras conforme voce usar mais o sistema.</span>
+                      <strong>Sem recomendações no momento</strong>
+                      <span>A FORJA vai sugerir leituras conforme você usar mais o sistema.</span>
                     </article>
                   `}
             </div>
@@ -485,7 +485,7 @@ export function MyAccountPage({ currentUser, books, loans, waitlists = [], notif
 function getReadingListStatus(book, loans) {
   const readLoan = loans.find((loan) => loan.bookId === book.id && loan.status === "RETURNED");
   if (readLoan) {
-    return { key: "read", label: "Ja lido" };
+    return { key: "read", label: "Já lido" };
   }
 
   const activeLoan = loans.find((loan) => loan.bookId === book.id && loan.status !== "RETURNED");
@@ -497,7 +497,7 @@ function getReadingListStatus(book, loans) {
     book.type === "digital" || Number(book.availableCopies ?? book.availableQuantity ?? 0) > 0;
   return {
     key: available ? "available" : "unavailable",
-    label: available ? "Disponivel" : "Sem estoque"
+    label: available ? "Disponível" : "Sem estoque"
   };
 }
 
@@ -548,9 +548,9 @@ function translateLoanStatus(status) {
     case "RETURNED":
       return "Devolvido";
     case "PENDING_APPROVAL":
-      return "Aguardando aprovacao";
+      return "Aguardando aprovação";
     case "REJECTED":
-      return "Solicitacao negada";
+      return "Solicitação negada";
     case "EXPIRED":
       return "Reserva expirada";
     default:
@@ -643,14 +643,14 @@ function buildRecommendationReason(book, preferredCategories, availableNow) {
   }
 
   if (availableNow) {
-    return "Ja esta pronto para entrar na sua proxima leitura.";
+    return "Já está pronto para entrar na sua próxima leitura.";
   }
 
   if (book.isPremium) {
-    return "Leitura de destaque para quem ja esta em um nivel mais avancado.";
+    return "Leitura de destaque para quem já está em um nível mais avançado.";
   }
 
-  return "Boa opcao para ampliar seu repertorio dentro da biblioteca.";
+  return "Boa opção para ampliar seu repertório dentro da biblioteca.";
 }
 
 function isGoldLevel(level) {
@@ -719,3 +719,5 @@ function calculateProfileCompletion(profileForm) {
   const filled = values.filter((value) => String(value || "").trim()).length;
   return Math.round((filled / values.length) * 100);
 }
+
+

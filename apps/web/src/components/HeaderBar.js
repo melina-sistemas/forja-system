@@ -5,11 +5,11 @@ import { Link, useLocation } from "react-router-dom";
 const html = htm.bind(React.createElement);
 
 const ROUTE_COPY = [
-  { match: "/admin", title: "Painel administrativo", hint: "Gerencie catalogo, regras e operacao." },
-  { match: "/livros", title: "Biblioteca", hint: "Escolha o proximo livro para leitura." },
-  { match: "/usuarios", title: "Usuarios", hint: "Acompanhe perfis, historicos e niveis." },
-  { match: "/desempenho", title: "Desempenho", hint: "Veja score, ranking e evolucao." },
-  { match: "/relatorios", title: "Relatorios", hint: "Analise dados de uso e qualidade." },
+  { match: "/admin", title: "Painel administrativo", hint: "Gerencie catálogo, regras e operação." },
+  { match: "/livros", title: "Biblioteca", hint: "Escolha o próximo livro para leitura." },
+  { match: "/usuarios", title: "Usuários", hint: "Acompanhe perfis, históricos e níveis." },
+  { match: "/desempenho", title: "Desempenho", hint: "Veja score, ranking e evolução." },
+  { match: "/relatorios", title: "Relatórios", hint: "Analise dados de uso e qualidade." },
   { match: "/entrar", title: "Acesso", hint: "Entre na sua conta FORJA." },
   { match: "/cadastrar", title: "Cadastro", hint: "Crie um novo acesso." }
 ];
@@ -21,7 +21,7 @@ export function HeaderBar({
   notifications = [],
   notificationCount = 0,
   searchValue = "",
-  searchPlaceholder = "Buscar livros, usuarios ou relatorios",
+  searchPlaceholder = "Buscar livros, usuários ou relatórios",
   searchSuggestions = [],
   searchEmptyText = "Nenhum resultado encontrado.",
   searchEnabled = false,
@@ -171,13 +171,13 @@ export function HeaderBar({
                   <button
                     type="button"
                     className="header-icon-button"
-                    aria-label="Notificacoes"
+                    aria-label="Notificações"
                     onClick=${() => setIsNotificationOpen((current) => !current)}
                   >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"></path>
-                    <path d="M10 21a2 2 0 0 0 4 0"></path>
-                  </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"></path>
+                      <path d="M10 21a2 2 0 0 0 4 0"></path>
+                    </svg>
                     ${notificationCount > 0
                       ? html`<span className="header-badge">${notificationCount}</span>`
                       : null}
@@ -187,7 +187,7 @@ export function HeaderBar({
                     ? html`
                         <div className="header-notification-popover">
                           <div className="header-notification-head">
-                            <strong>Notificacoes</strong>
+                            <strong>Notificações</strong>
                             <span>${notificationCount} novas</span>
                           </div>
 
@@ -212,8 +212,8 @@ export function HeaderBar({
                                 `
                               )
                             : html`<div className="header-notification-empty">Nenhuma notificação nova.</div>`}
-                    </div>
-                  `
+                        </div>
+                      `
                     : null}
                 </div>
 
@@ -224,7 +224,7 @@ export function HeaderBar({
                   <button
                     type="button"
                     className="header-profile-button"
-                    aria-label="Usuario"
+                    aria-label="Usuário"
                     aria-expanded=${isProfileOpen}
                     onClick=${() => setIsProfileOpen((current) => !current)}
                   >
@@ -268,10 +268,12 @@ export function HeaderBar({
                 ${isProfileOpen
                   ? html`
                       <div className="header-profile-popover header-profile-popover-guest">
-                        <strong>Acesso</strong>
-                        <span className="header-profile-level header-profile-level-neutral">
-                          Entre ou crie sua conta.
-                        </span>
+                        <div className="header-profile-guest-copy">
+                          <strong>Acesso</strong>
+                          <span className="header-profile-level header-profile-level-neutral">
+                            Entre ou crie sua conta.
+                          </span>
+                        </div>
                         <${Link}
                           to="/entrar"
                           className="header-profile-action"

@@ -11,7 +11,7 @@ export function AdminGamificationPage({ gamification, actions }) {
     <button
       type="button"
       className="admin-primary"
-      onClick=${() => setMessage("Configuracoes de gamificacao salvas.")}
+      onClick=${() => setMessage("Configurações de gamificação salvas.")}
     >
       Salvar regras
     </button>
@@ -19,8 +19,8 @@ export function AdminGamificationPage({ gamification, actions }) {
 
   return html`
     <${AdminPageLayout}
-      title="Gamificacao"
-      breadcrumb="Gamificacao"
+      title="Gamificação"
+      breadcrumb="Gamificação"
       description="Configure recompensas e penalidades para o ranking FORJA."
       actions=${actionsBar}
     >

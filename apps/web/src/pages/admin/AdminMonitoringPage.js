@@ -15,6 +15,7 @@ export function AdminMonitoringPage({ monitoring }) {
 
     return monitoring.ranking.slice(0, 5);
   }, [focus, monitoring.ranking]);
+
   const summary = useMemo(
     () => ({
       overdue: monitoring.overdueUsers.length,
@@ -47,7 +48,7 @@ export function AdminMonitoringPage({ monitoring }) {
     <div className="admin-filters-row">
       <label>
         <select value=${focus} onChange=${(event) => setFocus(event.target.value)}>
-          <option value="all">Visao completa</option>
+          <option value="all">Visão completa</option>
           <option value="top3">Top 3</option>
         </select>
       </label>
@@ -64,24 +65,24 @@ export function AdminMonitoringPage({ monitoring }) {
     >
       <section className="admin-summary-grid">
         <article className="admin-summary-card">
-          <span>Usuarios atrasados</span>
+          <span>Usuários atrasados</span>
           <strong>${summary.overdue}</strong>
           <small>Pessoas que precisam de acompanhamento.</small>
         </article>
         <article className="admin-summary-card">
           <span>Top score</span>
           <strong>${summary.topScore} pts</strong>
-          <small>Maior pontuacao atual da equipe.</small>
+          <small>Maior pontuação atual da equipe.</small>
         </article>
         <article className="admin-summary-card">
           <span>Livro mais lido</span>
           <strong>${summary.mostRead}</strong>
-          <small>Total de leituras do titulo lider.</small>
+          <small>Total de leituras do título líder.</small>
         </article>
         <article className="admin-summary-card">
-          <span>Qualidade media</span>
+          <span>Qualidade média</span>
           <strong>${summary.quality === "-" ? "-" : `${summary.quality}/10`}</strong>
-          <small>Media das respostas de devolucao.</small>
+          <small>Média das respostas de devolução.</small>
         </article>
       </section>
 
@@ -89,7 +90,7 @@ export function AdminMonitoringPage({ monitoring }) {
       <div className="admin-grid">
         <article className="admin-card">
           <div className="admin-card-header">
-            <h3>Usuarios atrasados</h3>
+            <h3>Usuários atrasados</h3>
           </div>
           ${monitoring.overdueUsers.length > 0
             ? html`
@@ -156,7 +157,7 @@ export function AdminMonitoringPage({ monitoring }) {
                   )}
                 </ul>
               `
-            : html`<p className="admin-helper">Ainda nao ha respostas avaliadas.</p>`}
+            : html`<p className="admin-helper">Ainda não há respostas avaliadas.</p>`}
         </article>
       </div>
     <//>

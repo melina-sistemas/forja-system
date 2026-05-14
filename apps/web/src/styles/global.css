@@ -495,8 +495,8 @@ textarea {
 
 .header-profile-button-guest {
   width: auto;
-  min-width: 42px;
-  padding: 0 14px;
+  min-width: 54px;
+  padding: 0 10px;
 }
 
 .header-profile-avatar {
@@ -524,8 +524,8 @@ textarea {
   top: calc(100% + 10px);
   right: 0;
   display: grid;
-  gap: 4px;
-  min-width: 132px;
+  gap: 7px;
+  min-width: 154px;
   padding: 10px 12px;
   border-radius: 14px;
   background: #ffffff;
@@ -564,13 +564,14 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
-  padding: 0 12px;
-  border-radius: 12px;
+  min-height: 30px;
+  padding: 0 8px;
+  border-radius: 11px;
   border: 1px solid rgba(6, 147, 227, 0.14);
   background: #e8f2ff;
   color: #0e78d5;
   font-weight: 700;
+  font-size: 0.8rem;
   text-decoration: none;
   box-shadow: none;
 }
@@ -581,7 +582,20 @@ textarea {
 }
 
 .header-profile-popover-guest {
-  min-width: 168px;
+  min-width: 126px;
+  gap: 4px;
+  padding: 8px 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.header-profile-guest-copy {
+  display: grid;
+  gap: 1px;
+  text-align: center;
+}
+
+.header-profile-guest-copy strong {
+  font-size: 0.76rem;
 }
 
 .header-profile-level-neutral {

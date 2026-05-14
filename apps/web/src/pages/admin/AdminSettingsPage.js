@@ -11,17 +11,17 @@ export function AdminSettingsPage({ settings, actions }) {
     <button
       type="button"
       className="admin-primary"
-      onClick=${() => setMessage("Configuracoes salvas com sucesso.")}
+      onClick=${() => setMessage("Configurações salvas com sucesso.")}
     >
-      Salvar configuracoes
+      Salvar configurações
     </button>
   `;
 
   return html`
     <${AdminPageLayout}
       title="Personalizacao"
-      breadcrumb="Personalizacao"
-      description="Controle o nome do sistema, cor principal e limites globais."
+      breadcrumb="Personalização"
+      description="Controle o nome do sistema, a cor principal e os limites globais."
       actions=${actionsBar}
     >
       <section className="admin-summary-grid">
@@ -31,19 +31,19 @@ export function AdminSettingsPage({ settings, actions }) {
           <small>Nome exibido no produto.</small>
         </article>
         <article className="admin-summary-card">
-          <span>Cor primaria</span>
+          <span>Cor primária</span>
           <strong>${settings.primaryColor}</strong>
           <small>Tom base da identidade visual.</small>
         </article>
         <article className="admin-summary-card">
-          <span>Limite de emprestimos</span>
+          <span>Limite de empréstimos</span>
           <strong>${settings.loanLimit}</strong>
-          <small>Quantidade maxima por usuario.</small>
+          <small>Quantidade máxima por usuário.</small>
         </article>
         <article className="admin-summary-card">
-          <span>Tempo maximo</span>
+          <span>Tempo máximo</span>
           <strong>${settings.globalMaxDays} dias</strong>
-          <small>Prazo global padrao da biblioteca.</small>
+          <small>Prazo global padrão da biblioteca.</small>
         </article>
       </section>
 
@@ -64,7 +64,7 @@ export function AdminSettingsPage({ settings, actions }) {
             </label>
 
             <label>
-              <span>Cor primaria</span>
+              <span>Cor primária</span>
               <input
                 value=${settings.primaryColor}
                 onInput=${(event) =>
@@ -80,7 +80,7 @@ export function AdminSettingsPage({ settings, actions }) {
           </div>
           <form className="admin-form admin-form-grid">
             <label>
-              <span>Limite de emprestimos</span>
+              <span>Limite de empréstimos</span>
               <input
                 type="number"
                 value=${settings.loanLimit}
@@ -90,7 +90,7 @@ export function AdminSettingsPage({ settings, actions }) {
             </label>
 
             <label>
-              <span>Tempo maximo global</span>
+              <span>Tempo máximo global</span>
               <input
                 type="number"
                 value=${settings.globalMaxDays}
