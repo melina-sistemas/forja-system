@@ -1,5 +1,18 @@
 export function createAdminApiClient(baseUrl) {
   return {
+    async fetchState() {
+      return request(`${baseUrl}/admin/state`, {
+        method: "GET"
+      });
+    },
+
+    async syncState(state) {
+      return request(`${baseUrl}/admin/state`, {
+        method: "POST",
+        body: JSON.stringify({ state })
+      });
+    },
+
     async syncBooks(books) {
       return request(`${baseUrl}/admin/books/sync`, {
         method: "POST",

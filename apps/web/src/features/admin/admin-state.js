@@ -153,20 +153,30 @@ const stabilizeAdminState = (rawState = {}) => {
   };
 };
 
-export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
+export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "", catalogReady = false) {
   const [state, setState] = useState(() =>
     stabilizeAdminState(createAdminState(readAdminState()))
   );
-  const booksSyncReadyRef = useRef(false);
+  const syncReadyRef = useRef(false);
   const adminApi = useMemo(
     () => (apiBaseUrl ? createAdminApiClient(apiBaseUrl) : null),
     [apiBaseUrl]
   );
 
   useEffect(() => {
-    setState((current) => stabilizeAdminState(mergeCatalogIntoState(catalog, current)));
-    booksSyncReadyRef.current = true;
-  }, [catalog]);
+    if (!catalogReady) {
+      return;
+    }
+
+    const persistedState = catalog.adminStateUpdatedAt ? catalog.adminState : readAdminState();
+
+    setState((current) =>
+      stabilizeAdminState(
+        mergeCatalogIntoState(catalog, persistedState && Object.keys(persistedState).length > 0 ? persistedState : current)
+      )
+    );
+    syncReadyRef.current = true;
+  }, [catalog, catalogReady]);
 
   useEffect(() => {
     writeAdminState(state);
@@ -177,22 +187,33 @@ export function useAdminPanel(catalog, currentUser = null, apiBaseUrl = "") {
       return undefined;
     }
 
-    if (!booksSyncReadyRef.current) {
+    if (!syncReadyRef.current) {
       return undefined;
     }
 
-    let cancelled = false;
-
-    adminApi.syncBooks(state.books).catch(() => {
-      if (!cancelled) {
-        // Keep local mode resilient if the API is temporarily unavailable.
+    const timer = globalThis.setTimeout(() => {
+      if (typeof adminApi.syncState !== "function" && typeof adminApi.syncBooks !== "function") {
+        return;
       }
-    });
+
+      const syncState = typeof adminApi.syncState === "function" ? adminApi.syncState.bind(adminApi) : null;
+      const syncBooks = typeof adminApi.syncBooks === "function" ? adminApi.syncBooks.bind(adminApi) : null;
+
+      if (syncState) {
+        syncState(state).catch(() => {
+          if (syncBooks) {
+            syncBooks(state.books).catch(() => {});
+          }
+        });
+      } else if (syncBooks) {
+        syncBooks(state.books).catch(() => {});
+      }
+    }, 150);
 
     return () => {
-      cancelled = true;
+      globalThis.clearTimeout(timer);
     };
-  }, [adminApi, state.books]);
+  }, [adminApi, state]);
 
   useEffect(() => {
     const timer = globalThis.setInterval(() => {

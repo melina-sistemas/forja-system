@@ -1,26 +1,25 @@
 import { createServer } from "node:http";
 import os from "node:os";
-import { readFile, writeFile } from "node:fs/promises";
 import { URL } from "node:url";
 import { loadEnvFile } from "./config/load-env.js";
 import { getSupabaseConfig } from "./config/supabase-config.js";
+import { createAdminStateStore } from "./data/admin-state-store.js";
 import { createDevelopmentPlanCatalog } from "./data/development-plan-data.js";
 import { createLoan } from "./modules/loans/runtime/create-loan.js";
 import { InMemoryLoanRepository } from "./modules/loans/runtime/in-memory-loan-repository.js";
 import { returnLoan } from "./modules/loans/runtime/return-loan.js";
 import { SupabaseLoanRepository } from "./modules/loans/runtime/supabase-loan-repository.js";
 
-const ADMIN_BOOKS_STATE_FILE = new URL("./data/admin-books-state.json", import.meta.url);
-
 loadEnvFile();
 
 const repository = createRepository();
-const server = createApiServer(repository);
+const adminStateStore = createAdminStateStore();
+const server = createApiServer(repository, adminStateStore);
 
 export { server };
 export default server;
 
-export function createApiServer(repository) {
+export function createApiServer(repository, adminStateStore) {
   return createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", "http://localhost");
     const pathname = normalizeRequestPath(url.pathname);
@@ -39,12 +38,24 @@ export function createApiServer(repository) {
 
       if (request.method === "GET" && pathname === "/seed") {
         const snapshot = await repository.getLibrarySnapshot();
-        const adminBooksState = await readAdminBooksState();
-        const mergedBooks = mergeBooks(snapshot.books, adminBooksState.books);
+        const persistedAdminState = await adminStateStore.read();
+        const mergedBooks = mergeBooks(snapshot.books, persistedAdminState.state.books);
 
         return sendJson(response, 200, {
           ...snapshot,
-          books: mergedBooks
+          books: mergedBooks,
+          adminState: persistedAdminState.state,
+          adminStateUpdatedAt: persistedAdminState.updatedAt
+        });
+      }
+
+      if (request.method === "GET" && pathname === "/admin/state") {
+        const persistedAdminState = await adminStateStore.read();
+
+        return sendJson(response, 200, {
+          success: true,
+          adminState: persistedAdminState.state,
+          adminStateUpdatedAt: persistedAdminState.updatedAt
         });
       }
 
@@ -116,11 +127,28 @@ export function createApiServer(repository) {
         const body = await readJsonBody(request);
         const nextBooks = Array.isArray(body.books) ? body.books : [];
 
-        await writeAdminBooksState({ books: nextBooks });
+        const currentState = await adminStateStore.read();
+        const nextState = {
+          ...currentState.state,
+          books: nextBooks
+        };
+        const savedState = await adminStateStore.write(nextState);
 
         return sendJson(response, 200, {
           success: true,
-          books: nextBooks.length
+          books: nextBooks.length,
+          adminStateUpdatedAt: savedState.updatedAt
+        });
+      }
+
+      if (request.method === "POST" && pathname === "/admin/state") {
+        const body = await readJsonBody(request);
+        const nextState = normalizeAdminState(body.state ?? body);
+        const savedState = await adminStateStore.write(nextState);
+
+        return sendJson(response, 200, {
+          success: true,
+          adminStateUpdatedAt: savedState.updatedAt
         });
       }
 
@@ -236,27 +264,25 @@ function sendJson(response, statusCode, payload) {
   response.end(JSON.stringify(payload, null, 2));
 }
 
-async function readAdminBooksState() {
-  try {
-    const raw = await readFile(ADMIN_BOOKS_STATE_FILE, "utf8");
-    const parsed = JSON.parse(raw);
-
+function normalizeAdminState(state) {
+  if (!state || typeof state !== "object") {
     return {
-      books: Array.isArray(parsed?.books) ? parsed.books : []
-    };
-  } catch (error) {
-    return {
-      books: []
+      books: [],
+      users: [],
+      loans: [],
+      waitlists: [],
+      notifications: []
     };
   }
-}
 
-async function writeAdminBooksState(state) {
-  const payload = {
-    books: Array.isArray(state?.books) ? state.books : []
+  return {
+    ...state,
+    books: Array.isArray(state.books) ? state.books : [],
+    users: Array.isArray(state.users) ? state.users : [],
+    loans: Array.isArray(state.loans) ? state.loans : [],
+    waitlists: Array.isArray(state.waitlists) ? state.waitlists : [],
+    notifications: Array.isArray(state.notifications) ? state.notifications : []
   };
-
-  await writeFile(ADMIN_BOOKS_STATE_FILE, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
 }
 
 function mergeBooks(baseBooks = [], adminBooks = []) {

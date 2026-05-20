@@ -68,6 +68,12 @@ create table if not exists public.book_recommendations (
   unique (user_id, book_id)
 );
 
+create table if not exists public.admin_state (
+  id text primary key,
+  payload jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_loans_user_id on public.loans(user_id);
 create index if not exists idx_loans_book_id on public.loans(book_id);
 create index if not exists idx_returns_user_id on public.returns(user_id);

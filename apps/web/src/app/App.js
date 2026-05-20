@@ -134,7 +134,7 @@ export function App() {
     location.pathname === "/cadastro/aguardando-aprovacao" ||
     location.pathname === "/cadastro/solicitacao-enviada";
   const activeAuthUser = normalizeAuthUser(authUser);
-  const adminPanel = useAdminPanel(catalog, activeAuthUser, apiBaseUrl);
+  const adminPanel = useAdminPanel(catalog, activeAuthUser, apiBaseUrl, !loadingCatalog);
   const isAuthenticated = Boolean(activeAuthUser);
   const hasApprovedAccess = isAuthenticated && isApprovedAuthUser(activeAuthUser);
   const canUseLibraryAccess = isAuthenticated && !isRejectedOrBlockedAuthUser(activeAuthUser);
@@ -1124,10 +1124,10 @@ function buildNameFromEmail(email) {
 }
 
 function getApiBaseUrl() {
-  const hostname = globalThis.location?.hostname ?? "";
+  const configuredBaseUrl = String(import.meta.env.VITE_API_BASE_URL ?? "").trim();
 
-  if (import.meta.env.PROD && hostname.endsWith("vercel.app")) {
-    return "";
+  if (configuredBaseUrl) {
+    return configuredBaseUrl;
   }
 
   return "/api";
@@ -1138,7 +1138,9 @@ function normalizeCatalogPayload(data) {
     users: Array.isArray(data?.users) ? data.users : [],
     books: Array.isArray(data?.books) ? data.books : [],
     loans: Array.isArray(data?.loans) ? data.loans : [],
-    returns: Array.isArray(data?.returns) ? data.returns : []
+    returns: Array.isArray(data?.returns) ? data.returns : [],
+    adminState: data?.adminState && typeof data.adminState === "object" ? data.adminState : null,
+    adminStateUpdatedAt: data?.adminStateUpdatedAt ?? null
   };
 }
 
